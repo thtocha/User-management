@@ -1,1 +1,3 @@
-@import "togle_status.css";
+.table td {
+    vertical-align: unset;
+}
