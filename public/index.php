@@ -32,8 +32,7 @@
                     <thead>
                     <tr>
                         <th><input type="checkbox"></th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
+                        <th>Name</th>
                         <th>Role</th>
                         <th>Status</th>
                         <th>Actions</th>
@@ -52,20 +51,23 @@
                             ?>
                             <tr>
                                 <td><input type="checkbox"></td>
-                                <td><?= $user['first_name'] ?></td>
-                                <td><?= $user['last_name'] ?></td>
+                                <td><?= $user['first_name'] . ' ' . $user['last_name']?></td>
                                 <td><?= $user['role'] ?></td>
                                 <td>
                                     <div class="d-flex justify-content-center">
-                                        <?= $user['status'] ?>
+                                        <?php if ($user['status'] == 1): ?>
+                                            <div style="width: 20px; height: 20px; border-radius: 50%; background-color: green;"></div>
+                                        <?php else:?>
+                                            <div style="width: 20px; height: 20px; border-radius: 50%; background-color: rgb(128,128,128);"></div>
+                                        <?php endif;?>
                                     </div>
                                 </td>
                                 <td>
                                     <div class="d-flex justify-content-center">
                                         <div class="btn-group text-center">
-                                            <button type="button" class="btn btn-outline-dark" style="font-size: 0.6rem" data-toggle="modal" data-target="#updateUserModal">Edit</button>
+                                            <button type="button" class="btn btn-outline-dark" style="font-size: 0.7rem" data-toggle="modal" data-target="#updateUserModal">Edit</button>
                                             <button type="button" class="btn btn-outline-dark" style="font-size: 0.6rem" data-toggle="modal" data-target="#deleteUserModal">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                                                     <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
                                                     <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
                                                 </svg>
@@ -170,8 +172,8 @@
                     </div>
                     <div class="mb-3">
                         <div class="custom-control custom-switch">
-                            <input type="checkbox" class="custom-control-input" id="customSwitch1">
-                            <label class="custom-control-label" for="customSwitch1">Status</label>
+                            <input type="checkbox" class="custom-control-input" id="customSwitch2">
+                            <label class="custom-control-label" for="customSwitch2">Status</label>
                         </div>
                     </div>
                     <div class="mb-3">
@@ -199,17 +201,16 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Delete User</h4>
+                <h4 class="modal-title">Delete Confirmation</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to delete this Record?</p>
-                <p class="text-warning"><small>This action cannot be undone.</small></p>
+                <p>Are you sure you want to delete <?= $user['first_name'] . ' ' . $user['last_name']?></p>
             </div>
             <input type="hidden" id="delete_id">
             <div class="modal-footer">
                 <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-                <input type="submit" class="btn btn-danger" onclick="deleteEmployee()" value="Delete">
+                <input type="submit" class="btn btn-danger" value="Delete">
             </div>
         </div>
     </div>
