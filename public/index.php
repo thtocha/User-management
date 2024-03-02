@@ -14,7 +14,21 @@
         <div class="col-md-12">
             <h2>Users</h2>
             <?php include "includes/manipulation.php" ?>
-            <?php include "includes/table.php"; ?>
+            <table id="myTable" class="table table-bordered mt-3">
+                <thead>
+                <tr>
+                    <th><input type="checkbox"></th>
+                    <th>Name</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <?php include "includes/table.php"; ?>
+                </tbody>
+            </table>
+
             <?php include "includes/manipulation.php"; ?>
 
         </div>

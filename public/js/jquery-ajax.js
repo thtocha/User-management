@@ -1,4 +1,11 @@
 $(document).ready(function() {
+    function clearForm() {
+        $('input[name=first_name]').val('');
+        $('input[name=last_name]').val('');
+        $('#customSwitch1').prop('checked', false);
+        $('#role').val('-Please-select-');
+    }
+
     $('#addUsers').submit(function(e) {
         e.preventDefault();
 
@@ -19,7 +26,35 @@ $(document).ready(function() {
             .done(function (data) {
                 if (data.status) {
                     $('#addUserModal').modal('hide');
-                    location.reload();
+                    clearForm();
+                }
+            })
+            .error(function (data) {
+                $('#errorMessage').removeClass('d-none');
+                $('#errorMessage').text(data.error.message);
+            });
+    });
+
+    $('#myTable').on('click', 'button[data-target="#deleteUserModal"]', function(){
+        var userName = $(this).data('user-name');
+        $('#deleteUserModal .modal-body p').text('Are you sure you want to delete ' + userName + '?');
+        $('#deleteUserModal #delete_id').val($(this).data('user-id'));
+    });
+
+    $('#deleteUsers').on('submit', function(e){
+        e.preventDefault();
+
+        $.ajax({
+            type: 'POST',
+            url: '../Controller/deleteUser.php',
+            data: $(this).serialize(),
+            dataType: 'json',
+            encode: true
+        })
+            .done(function (data) {
+                if (data.status) {
+                    $('#deleteUserModal').modal('hide');
+                    $('#deleteUserModal #delete_id').val('');
                 }
             })
             .error(function (data) {
