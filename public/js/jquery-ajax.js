@@ -6,10 +6,23 @@ $(document).ready(function() {
         $('#role').val('-Please-select-');
     }
 
+    function refreshTable() {
+        $.ajax({
+            type: 'GET',
+            url: 'table.php',
+            dataType: 'html',
+            success: function (data) {
+                $('#myTable tbody').html(data);
+            },
+            error: function (error) {
+                console.log('Error refreshing table:', error);
+            }
+        });
+    }
     $('#addUsers').submit(function(e) {
         e.preventDefault();
 
-        var formData = {
+        let formData = {
             first_name: $('input[name=first_name]').val(),
             last_name: $('input[name=last_name]').val(),
             status: $('#customSwitch1').prop('checked') ? 1 : 0,
@@ -21,18 +34,15 @@ $(document).ready(function() {
             url: '../Controller/addUser.php',
             data: formData,
             dataType: 'json',
-            encode: true
-        })
-            .done(function (data) {
+            encode: true,
+            success: function (data) {
                 if (data.status) {
                     $('#addUserModal').modal('hide');
                     clearForm();
+                    refreshTable();
                 }
-            })
-            .error(function (data) {
-                $('#errorMessage').removeClass('d-none');
-                $('#errorMessage').text(data.error.message);
-            });
+            }
+        })
     });
 
     $('#myTable').on('click', 'button[data-target="#deleteUserModal"]', function(){
@@ -44,22 +54,21 @@ $(document).ready(function() {
     $('#deleteUsers').on('submit', function(e){
         e.preventDefault();
 
+        let form = $(this);
+
         $.ajax({
             type: 'POST',
             url: '../Controller/deleteUser.php',
-            data: $(this).serialize(),
+            data: form.serialize(),
             dataType: 'json',
-            encode: true
-        })
-            .done(function (data) {
+            encode: true,
+            success: function (data) {
                 if (data.status) {
                     $('#deleteUserModal').modal('hide');
                     $('#deleteUserModal #delete_id').val('');
+                    refreshTable();
                 }
-            })
-            .error(function (data) {
-                $('#errorMessage').removeClass('d-none');
-                $('#errorMessage').text(data.error.message);
-            });
+            }
+        });
     });
 });

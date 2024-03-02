@@ -25,7 +25,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                    <?php include "includes/table.php"; ?>
+                    <?php include "table.php"; ?>
                 </tbody>
             </table>
 
