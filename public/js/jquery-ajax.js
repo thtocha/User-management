@@ -19,7 +19,7 @@ $(document).ready(function() {
             }
         });
     }
-    $('#addUsers').submit(function(e) {
+    $('#addUsers').submit(function (e) {
         e.preventDefault();
 
         let formData = {
@@ -45,13 +45,13 @@ $(document).ready(function() {
         })
     });
 
-    $('#myTable').on('click', 'button[data-target="#deleteUserModal"]', function(){
+    $('#myTable').on('click', 'button[data-target="#deleteUserModal"]', function () {
         var userName = $(this).data('user-name');
         $('#deleteUserModal .modal-body p').text('Are you sure you want to delete ' + userName + '?');
         $('#deleteUserModal #delete_id').val($(this).data('user-id'));
     });
 
-    $('#deleteUsers').on('submit', function(e){
+    $('#deleteUsers').on('submit', function (e){
         e.preventDefault();
 
         let form = $(this);
@@ -71,4 +71,41 @@ $(document).ready(function() {
             }
         });
     });
-});
+
+
+    $('#myTable').on('click', 'button[data-target="#updateUserModal"]', function () {
+        $('#updateUserModal #update_id').val($(this).data('user-id'));
+        let fullName = $(this).closest('tr').find('td:eq(1)').text().trim().split(' ');
+        $('#updateUserModal input[name=first_name]').val(fullName[0]);
+        $('#updateUserModal input[name=last_name]').val(fullName[1] ? fullName[1] : '');
+        $('#updateUserModal #customSwitch2').prop('checked', $(this).closest('tr').find('td:eq(3) div div').css('background-color') === 'rgb(0, 128, 0)');
+        $('#updateUserModal #role').val($(this).closest('tr').find('td:eq(2)').text().trim());
+    });
+
+    $('#updateUsers').submit(function (e) {
+        e.preventDefault();
+
+        let formData = {
+            first_name: $('#updateUserModal input[name=first_name]').val(),
+            last_name: $('#updateUserModal input[name=last_name]').val(),
+            status: $('#updateUserModal #customSwitch2').prop('checked') ? 1 : 0,
+            role: $('#updateUserModal #role').val(),
+            user_id: $('#update_id').val()
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: '../Controller/updateUser.php',
+            data: formData,
+            dataType: 'json',
+            encode: true,
+            success: function (data) {
+                if (data.status) {
+                    $('#updateUserModal').modal('hide');
+                    clearForm();
+                    refreshTable();
+                }
+            }
+        });
+    });
+})
