@@ -134,8 +134,17 @@ $(document).ready(function() {
         }).get();
 
         if (userIds.length === 0) {
-            alert('Please select at least one user.');
-            return;
+            $('#userWarning').show();
+            setTimeout(function () {
+                $('#userWarning').hide();
+            }, 4000)
+        }
+
+        if (action === '-Please-select-') {
+            $('#actionWarning').show();
+            setTimeout(function () {
+                $('#actionWarning').hide();
+            }, 4000)
         }
 
         let formData = {
