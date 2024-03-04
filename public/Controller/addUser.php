@@ -17,7 +17,7 @@ if(isset($_POST['first_name']) && isset($_POST['last_name']) && isset($_POST['st
         $query = "INSERT INTO users (first_name, last_name, status, role) VALUES ('$first_name', '$last_name', '$status', '$role')";
 
         if (mysqli_query($con, $query)) {
-            $response = array('status' => true, 'message' => 'User added successfully');
+            $response = array('status' => true, 'error' => null ,'user' => array('first_name' => $first_name, 'last_name' => $last_name, 'status' => $status, 'role' => $role));
             echo json_encode($response);
         } else {
             $response = array('status' => false, 'error' => array('code' => 500, 'message' => 'Failed to add user'));

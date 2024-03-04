@@ -33,10 +33,9 @@ if(isset($_POST['action']) && isset($_POST['userIds'])) {
         }
     }
 
-    $response = array('status' => true, 'message' => 'Action applied successfully');
+    $response = array('status' => true, 'error' => null, 'action' => $action, 'userIds' => $selectedUserIds);
     echo json_encode($response);
 } else {
     $response = array('status' => false, 'error' => 'Missing required data');
     echo json_encode($response);
 }
-?>

@@ -14,7 +14,7 @@ if(isset($_POST['user_id']))
         $query = "DELETE FROM users WHERE id = '$user_id'";
 
         if (mysqli_query($con, $query)) {
-            $response = array('status' => true, 'message' => 'User delete successfully');
+            $response = array('status' => true, 'error' => null ,'user' => array('user_id' => $user_id));
             echo json_encode($response);
         } else {
             $response = array('status' => false, 'error' => array('code' => 500, 'message' => 'Failed to delete user'));
