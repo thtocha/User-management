@@ -20,9 +20,10 @@
                         <input type="text" name="last_name" class="form-control"/>
                     </div>
                     <div class="mb-3">
+                        <label for="customSwitch1">Status</label>
                         <div class="custom-control custom-switch">
                             <input type="checkbox" class="custom-control-input" id="customSwitch2">
-                            <label class="custom-control-label" for="customSwitch2">Status</label>
+                            <label class="custom-control-label" for="customSwitch2"></label>
                         </div>
                     </div>
                     <div class="mb-3">

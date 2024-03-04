@@ -20,10 +20,10 @@
                         <input type="text" name="last_name" class="form-control"/>
                     </div>
                     <div class="mb-3">
+                        <label for="customSwitch1">Status</label>
                         <div class="custom-control custom-switch">
                             <input type="checkbox" class="custom-control-input" id="customSwitch1">
-                            <label class="custom-control-label" for="customSwitch1">Status</label>
-                            <!--                            todo status size and replace-->
+                            <label class="custom-control-label" for="customSwitch1"></label>
                         </div>
                     </div>
                     <div class="mb-3">
