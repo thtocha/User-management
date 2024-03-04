@@ -28,7 +28,6 @@
                     <?php include "table.php"; ?>
                 </tbody>
             </table>
-
             <?php include "manipulation.php"; ?>
 
         </div>

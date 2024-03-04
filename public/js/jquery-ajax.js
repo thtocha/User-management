@@ -126,9 +126,9 @@ $(document).ready(function() {
         });
     }
 
-    $('#ok').on('click', function(e) {
+    $(document).on('click', '#ok', function(e) {
         e.preventDefault();
-        let action = $('#setStatus').val();
+        let action = $(this).closest('#block').find('select').val();
         let userIds = $('input[name="users[]"]:checked').map(function(){
             return $(this).closest('tr').find('button[data-target="#deleteUserModal"]').data('user-id');
         }).get();
