@@ -13,11 +13,11 @@
     <div class="row">
         <div class="col-md-12">
             <h2>Users</h2>
-            <?php include "includes/manipulation.php" ?>
+            <?php include "manipulation.php" ?>
             <table id="myTable" class="table table-bordered mt-3">
                 <thead>
                 <tr>
-                    <th><input type="checkbox"></th>
+                    <th><input type="checkbox" id="checkAll"></th>
                     <th>Name</th>
                     <th>Role</th>
                     <th>Status</th>
@@ -29,7 +29,7 @@
                 </tbody>
             </table>
 
-            <?php include "includes/manipulation.php"; ?>
+            <?php include "manipulation.php"; ?>
 
         </div>
     </div>

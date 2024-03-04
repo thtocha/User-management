@@ -1,4 +1,5 @@
 $(document).ready(function() {
+    bindCheckboxEvents();
     function clearForm() {
         $('input[name=first_name]').val('');
         $('input[name=last_name]').val('');
@@ -13,6 +14,7 @@ $(document).ready(function() {
             dataType: 'html',
             success: function (data) {
                 $('#myTable tbody').html(data);
+                bindCheckboxEvents();
             },
             error: function (error) {
                 console.log('Error refreshing table:', error);
@@ -77,8 +79,8 @@ $(document).ready(function() {
         $('#updateUserModal #update_id').val($(this).data('user-id'));
         let fullName = $(this).closest('tr').find('td:eq(1)').text().trim().split(' ');
         $('#updateUserModal input[name=first_name]').val(fullName[0]);
-        $('#updateUserModal input[name=last_name]').val(fullName[1] ? fullName[1] : '');
-        $('#updateUserModal #customSwitch2').prop('checked', $(this).closest('tr').find('td:eq(3) div div').css('background-color') === 'rgb(0, 128, 0)');
+        $('#updateUserModal input[name=last_name]').val(fullName[1]);
+        $('#updateUserModal #customSwitch2').prop('checked', $(this).closest('tr').find('td:eq(3) div div'));
         $('#updateUserModal #role').val($(this).closest('tr').find('td:eq(2)').text().trim());
     });
 
@@ -106,6 +108,52 @@ $(document).ready(function() {
                     refreshTable();
                 }
             }
+        });
+    });
+
+    function updateCheckboxes() {
+        let isChecked = $('#checkAll').prop('checked');
+        $('input[name = "users[]"]').prop('checked', isChecked);
+    }
+
+    function bindCheckboxEvents() {
+        $('input[name="users[]"]').change(function () {
+            let anyUnchecked = $('input[name="users[]"]:not(:checked)').length > 0;
+            $('#checkAll').prop('checked', !anyUnchecked);
+        });
+        $('#checkAll').change(function () {
+            updateCheckboxes();
+        });
+    }
+
+    $('#ok').on('click', function(e) {
+        e.preventDefault();
+        let action = $('#setStatus').val();
+        let userIds = $('input[name="users[]"]:checked').map(function(){
+            return $(this).closest('tr').find('button[data-target="#deleteUserModal"]').data('user-id');
+        }).get();
+
+        if (userIds.length === 0) {
+            alert('Please select at least one user.');
+            return;
+        }
+
+        let formData = {
+            action: action,
+            userIds: userIds
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '../Controller/action.php',
+            data: formData,
+            dataType: 'json',
+            encode: true,
+            success: function () {
+                $('#setStatus').val('-Please-select-');
+                $('#checkAll').prop('checked', false);
+                refreshTable();
+            },
         });
     });
 })
