@@ -143,32 +143,52 @@ $(document).ready(function() {
             $('#userWarning').show();
             setTimeout(function () {
                 $('#userWarning').hide();
-            }, 4000)
+            }, 4000);
+            return;
         }
 
-        if (action === '-Please-select-') {
-            $('#actionWarning').show();
-            setTimeout(function () {
-                $('#actionWarning').hide();
-            }, 4000)
-        }
+        if (action === 'delete') {
+            $('#selectedUsersCount').text(userIds.length);
+            $('#confirmDeleteModal').modal('show');
+            $('#confirmDeleteButton').click(function() {
+                let formData = {
+                    action: action,
+                    userIds: userIds
+                };
 
-        let formData = {
-            action: action,
-            userIds: userIds
-        }
+                $.ajax({
+                    type: 'POST',
+                    url: 'Controller/action.php',
+                    data: formData,
+                    dataType: 'json',
+                    encode: true,
+                    success: function () {
+                        $('#setStatus').val('-Please-select-');
+                        $('#checkAll').prop('checked', false);
+                        refreshTable();
+                    }
+                });
 
-        $.ajax({
-            type: 'POST',
-            url: '../Controller/action.php',
-            data: formData,
-            dataType: 'json',
-            encode: true,
-            success: function () {
-                $('#setStatus').val('-Please-select-');
-                $('#checkAll').prop('checked', false);
-                refreshTable();
-            },
-        });
+                $('#confirmDeleteModal').modal('hide');
+            });
+        } else {
+            let formData = {
+                action: action,
+                userIds: userIds
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: 'Controller/action.php',
+                data: formData,
+                dataType: 'json',
+                encode: true,
+                success: function () {
+                    $('#setStatus').val('-Please-select-');
+                    $('#checkAll').prop('checked', false);
+                    refreshTable();
+                }
+            });
+        }
     });
 })
