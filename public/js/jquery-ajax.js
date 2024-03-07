@@ -82,12 +82,14 @@ $(document).ready(function() {
 
 
     $('#myTable').on('click', 'button[data-target="#updateUserModal"]', function () {
+        let row = $(this).closest('tr');
         $('#updateUserModal #update_id').val($(this).data('user-id'));
-        let fullName = $(this).closest('tr').find('td:eq(1)').text().trim().split(' ');
+        let fullName = row.find('td:eq(1)').text().trim().split(' ');
         $('#updateUserModal input[name=first_name]').val(fullName[0]);
         $('#updateUserModal input[name=last_name]').val(fullName[1]);
-        $('#updateUserModal #customSwitch2').prop('checked', $(this).closest('tr').find('td:eq(3) div div'));
-        $('#updateUserModal #role').val($(this).closest('tr').find('td:eq(2)').text().trim());
+        let status = $(this).data('status');
+        $('#updateUserModal #customSwitch2').prop('checked', status == 1);
+        $('#updateUserModal #role').val(row.find('td:eq(2)').text().trim());
     });
 
     $('#updateUsers').submit(function (e) {
