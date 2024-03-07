@@ -33,10 +33,10 @@ $(document).ready(function() {
 
         if (formData.first_name == '' || formData.last_name == '' || formData.role == '-Please-select-') {
             $('#errorMessage').removeClass('d-none');
-            setTimeout(function () {
-                $('#errorMessage').addClass('d-none');
-            }, 4000)
+        } else {
+            $('#errorMessage').addClass('d-none');
         }
+
         $.ajax({
             type: 'POST',
             url: '../Controller/addUser.php',
@@ -142,11 +142,15 @@ $(document).ready(function() {
         }).get();
 
         if (userIds.length === 0) {
-            $('#userWarning').show();
-            setTimeout(function () {
-                $('#userWarning').hide();
-            }, 4000);
-            return;
+            $('#userWarning').removeClass('d-none');
+        } else {
+            $('#userWarning').addClass('d-none');
+        }
+
+        if (action === '-Please-select-') {
+            $('#actionWarning').removeClass('d-none');
+        } else {
+            $('#actionWarning').addClass('d-none');
         }
 
         if (action === 'delete') {
