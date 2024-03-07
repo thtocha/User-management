@@ -134,7 +134,7 @@ $(document).ready(function() {
 
     $(document).on('click', '#ok', function(e) {
         e.preventDefault();
-        let action = $(this).closest('#block').find('select').val();
+        let action = $(this).siblings('.setStatus').val();
         let userIds = $('input[name="users[]"]:checked').map(function(){
             return $(this).closest('tr').find('button[data-target="#deleteUserModal"]').data('user-id');
         }).get();
@@ -163,7 +163,7 @@ $(document).ready(function() {
                     dataType: 'json',
                     encode: true,
                     success: function () {
-                        $('#setStatus').val('-Please-select-');
+                        $('.setStatus').val('-Please-select-');
                         $('#checkAll').prop('checked', false);
                         refreshTable();
                     }
@@ -184,7 +184,7 @@ $(document).ready(function() {
                 dataType: 'json',
                 encode: true,
                 success: function () {
-                    $('#setStatus').val('-Please-select-');
+                    $('.setStatus').val('-Please-select-');
                     $('#checkAll').prop('checked', false);
                     refreshTable();
                 }
