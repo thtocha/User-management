@@ -31,6 +31,12 @@ $(document).ready(function() {
             role: $('#role').val()
         };
 
+        if (formData.first_name == '' || formData.last_name == '' || formData.role == '-Please-select-') {
+            $('#errorMessage').removeClass('d-none');
+            setTimeout(function () {
+                $('#errorMessage').addClass('d-none');
+            }, 4000)
+        }
         $.ajax({
             type: 'POST',
             url: '../Controller/addUser.php',

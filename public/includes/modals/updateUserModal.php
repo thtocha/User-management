@@ -20,7 +20,7 @@
                         <input type="text" name="last_name" class="form-control"/>
                     </div>
                     <div class="mb-3">
-                        <label for="customSwitch1">Status</label>
+                        <label for="customSwitch2">Status</label>
                         <div class="custom-control custom-switch">
                             <input type="checkbox" class="custom-control-input" id="customSwitch2">
                             <label class="custom-control-label" for="customSwitch2"></label>
@@ -29,7 +29,7 @@
                     <div class="mb-3">
                         <label for="role">Role</label>
                         <div>
-                            <select class="custom-select" id="role" style="width: 155px">
+                            <select class="custom-select" id="role" name="role" style="width: 155px">
                                 <option selected>-Please-select-</option>
                                 <option value="user">User</option>
                                 <option value="admin">Admin</option>

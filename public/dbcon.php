@@ -1,6 +1,10 @@
 <?php
-$con = mysqli_connect("db","root","root","UserManagement");
+$host = 'db';
+$user = 'root';
+$pass = 'root';
+$db = 'UserManagement';
 
-if(!$con){
-    die('Connection Failed'. mysqli_connect_error());
+$con = mysqli_connect($host, $user, $pass, $db);
+if (!$con) {
+    die("Connection failed: " . mysqli_connect_error());
 }
