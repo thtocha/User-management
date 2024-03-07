@@ -9,9 +9,20 @@ if(isset($_POST['first_name']) && isset($_POST['last_name']) && isset($_POST['st
     $status = mysqli_real_escape_string($con, $_POST['status']);
     $role = mysqli_real_escape_string($con, $_POST['role']);
 
-    if(empty($first_name) || empty($last_name) || empty($role))
+    $errors = array();
+    if(empty($first_name)) {
+        $errors[] = 'First name';
+    }
+    if(empty($last_name)) {
+        $errors[] = 'Last name';
+    }
+    if($role === '-Please-select-') {
+        $errors[] = 'Role';
+    }
+
+    if(!empty($errors))
     {
-        $response = array('status' => false, 'error' => array('code' => 400, 'message' => 'All fields are required'));
+        $response = array('status' => false, 'error' => array('code' => 400, 'message' => 'Following fields are required: ' . implode(', ', $errors)));
         echo json_encode($response);
     } else {
         $query = "UPDATE users SET first_name = '$first_name', last_name = '$last_name', status = '$status', role = '$role' WHERE id = '$user_id'";
