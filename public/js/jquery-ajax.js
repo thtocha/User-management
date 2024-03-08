@@ -69,7 +69,7 @@ $(document).ready(function() {
     });
 
     $('#myTable').on('click', 'button[data-target="#deleteUserModal"]', function () {
-        var userName = $(this).data('user-name');
+        let userName = $(this).data('user-name');
         $('#deleteUserModal .modal-body p').text('Are you sure you want to delete ' + userName + '?');
         $('#deleteUserModal #delete_id').val($(this).data('user-id'));
     });
@@ -89,6 +89,10 @@ $(document).ready(function() {
                 if (data.status) {
                     $('#deleteUserModal').modal('hide');
                     $('#deleteUserModal #delete_id').val('');
+                    let deletedUserId = data.user.user_id;
+                    $('table#myTable tbody tr').filter(function () {
+                        return $(this).find('button[data-target="#deleteUserModal"]').data('user-id') == deletedUserId;
+                    }).remove();
                 }
             }
         });
