@@ -21,11 +21,11 @@ $(document).ready(function() {
             '<td>' +
             '<div class="d-flex justify-content-center">' +
             '<div class="btn-group text-center">' +
-            '<button type="button" data-target="#updateUserModal" data-user-id="' + userData.id + '" data-user-name="' + userData.name + '" data-status="' + userData.status + '" class="btn btn-outline-dark" style="font-size: 0.7rem" data-toggle="modal">' +
+            '<button type="button" data-target="#updateUserModal" data-user-id="' + userData.id + '" data-user-name="' + userData.first_name + ' ' + userData.last_name + '" data-status="' + userData.status + '" class="btn btn-outline-dark" style="font-size: 0.7rem" data-toggle="modal">' +
             '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">' +
             '<path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"/></svg>' +
             '</button>' +
-            '<button type="button" data-target="#deleteUserModal" data-user-id="' + userData.id + '" data-user-name="' + userData.name + '" class="btn btn-outline-dark" style="font-size: 0.6rem" data-toggle="modal">' +
+            '<button type="button" data-target="#deleteUserModal" data-user-id="' + userData.id + '" data-user-name="' + userData.first_name + ' ' + userData.last_name + '" class="btn btn-outline-dark" style="font-size: 0.6rem" data-toggle="modal">' +
             '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">' +
             '<path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg>' +
             '</button>' +
@@ -36,7 +36,6 @@ $(document).ready(function() {
         $('#myTable tbody').append(row);
         bindCheckboxEvents();
     }
-
     $('#addUsers').submit(function(e) {
         e.preventDefault();
         let formData = {
@@ -98,6 +97,36 @@ $(document).ready(function() {
         });
     });
 
+    function updateTableRow(userData) {
+        let oldRow = $('#myTable tbody tr').filter(function () {
+            return $(this).find('button[data-target="#updateUserModal"]').data('user-id') == userData.id;
+        });
+
+        let newRow = $('<tr>')
+            .append($('<td>').html('<input type="checkbox" name="users[]" data-user-id="' + userData.id + '">'))
+            .append($('<td>').text(userData.first_name + ' ' + userData.last_name))
+            .append($('<td>').text(userData.role))
+            .append($('<td style="vertical-align: middle; text-align: center">')
+                .append($('<div class="d-flex justify-content-center">')
+                    .append((userData.status == 1 ? $('<div style="width: 20px; height: 20px; border-radius: 50%; background-color: green;"></div>') : $('<div style="width: 20px; height: 20px; border-radius: 50%; background-color: rgb(128,128,128);"></div>')))
+                )
+            )
+            .append($('<td>')
+                .append($('<div class="d-flex justify-content-center">')
+                    .append($('<div class="btn-group text-center">')
+                        .append($('<button type="button" data-target="#updateUserModal" data-user-id="' + userData.id + '" data-user-name="' + userData.first_name + ' ' + userData.last_name + '" data-status="' + userData.status + '" class="btn btn-outline-dark" style="font-size: 0.7rem" data-toggle="modal">')
+                            .append($('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16"><path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/></svg>'))
+                        )
+                        .append($('<button type="button" data-target="#deleteUserModal" data-user-id="' + userData.id + '" data-user-name="' + userData.first_name + ' ' + userData.last_name + '" data-status="' + userData.status + '" class="btn btn-outline-dark" style="font-size: 0.6rem" data-toggle="modal">')
+                            .append($('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg>'))
+                        )
+                    )
+                )
+            );
+
+        oldRow.replaceWith(newRow);
+        bindCheckboxEvents();
+    }
 
     $('#myTable').on('click', 'button[data-target="#updateUserModal"]', function () {
         let row = $(this).closest('tr');
@@ -131,6 +160,8 @@ $(document).ready(function() {
                 if (data.status) {
                     $('#updateUserModal').modal('hide');
                     clearForm();
+                    updateTableRow(data.userData);
+                    bindCheckboxEvents();
                 }
             }
         });
@@ -151,7 +182,7 @@ $(document).ready(function() {
         });
     }
 
-    $(document).on('click', '#ok', function(e) {
+    $(document).on('click', '#ok',function(e) {
         e.preventDefault();
         let action = $(this).siblings('.setStatus').val();
         let userIds = $('input[name="users[]"]:checked').map(function(){
@@ -181,16 +212,25 @@ $(document).ready(function() {
 
                 $.ajax({
                     type: 'POST',
-                    url: 'Controller/action.php',
+                    url: '../Controller/action.php',
                     data: formData,
                     dataType: 'json',
                     encode: true,
-                    success: function () {
-                        $('.setStatus').val('-Please-select-');
-                        $('#checkAll').prop('checked', false);
+                    success: function (data) {
+                        if (data.status) {
+                            data.userIds.forEach(function(userId) {
+                                let row = $('#myTable tbody tr').filter(function () {
+                                    return $(this).find('button[data-target="#deleteUserModal"]').data('user-id') == userId;
+                                });
+
+                                row.remove();
+                            });
+                            $('input[name="users[]"]').prop('checked', false);
+                            $('.setStatus').val('-Please-select-');
+                            updateCheckboxes();
+                        }
                     }
                 });
-
                 $('#confirmDeleteModal').modal('hide');
             });
         } else {
@@ -201,13 +241,24 @@ $(document).ready(function() {
 
             $.ajax({
                 type: 'POST',
-                url: 'Controller/action.php',
+                url: '../Controller/action.php',
                 data: formData,
                 dataType: 'json',
                 encode: true,
-                success: function () {
-                    $('.setStatus').val('-Please-select-');
-                    $('#checkAll').prop('checked', false);
+                success: function (data) {
+                    if (data.status) {
+                        data.userIds.forEach(function(userId) {
+                            let row = $('#myTable tbody tr').filter(function () {
+                                return $(this).find('button[data-target="#deleteUserModal"]').data('user-id') == userId;
+                            });
+                            let newStatus = data.action === 'active' ? 1 : 0;
+                            row.find('td:eq(3)').html('<div class="d-flex justify-content-center">' + (newStatus == 1 ? '<div style="width: 20px; height: 20px; border-radius: 50%; background-color: green;"></div>' : '<div style="width: 20px; height: 20px; border-radius: 50%; background-color: rgb(128,128,128);"></div>') + '</div>');
+
+                        });
+                        $('input[name="users[]"]').prop('checked', false);
+                        $('.setStatus').val('-Please-select-');
+                        updateCheckboxes();
+                    }
                 }
             });
         }

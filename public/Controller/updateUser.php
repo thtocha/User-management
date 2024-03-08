@@ -28,7 +28,18 @@ if(isset($_POST['first_name']) && isset($_POST['last_name']) && isset($_POST['st
         $query = "UPDATE users SET first_name = '$first_name', last_name = '$last_name', status = '$status', role = '$role' WHERE id = '$user_id'";
 
         if (mysqli_query($con, $query)) {
-            $response = array('status' => true, 'error' => null , 'user' => array('id' => $user_id, 'first_name' => $first_name, 'last_name' => $last_name, 'status' => $status, 'role' => $role));
+            $response = array(
+                'status' => true,
+                'error' => null,
+                'oldUserId' => $user_id,
+                'userData' => array(
+                    'id' => $user_id,
+                    'first_name' => $first_name,
+                    'last_name' => $last_name,
+                    'status' => $status,
+                    'role' => $role
+                )
+            );
             echo json_encode($response);
         } else {
             $response = array('status' => false, 'error' => array('code' => 500, 'message' => 'Failed to update user'));
