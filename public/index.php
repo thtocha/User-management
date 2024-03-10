@@ -14,8 +14,7 @@
         <div class="col-md-12">
             <h2>Users</h2>
             <?php include "manipulation.php" ?>
-            <div id="userWarning" class="alert alert-danger mt-2 d-none">Please select at least one user.</div>
-            <div id="actionWarning" class="alert alert-danger mt-2 d-none">Please select an action.</div>
+            <div id="actionWarning" class="alert alert-danger mt-2 d-none"></div>
             <table id="myTable" class="table table-bordered mt-3">
                 <thead>
                 <tr>

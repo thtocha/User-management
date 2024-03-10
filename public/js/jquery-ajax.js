@@ -45,12 +45,6 @@ $(document).ready(function() {
             role: $('#role').val()
         };
 
-        if (formData.first_name == '' || formData.last_name == '' || formData.role == '-Please-select-') {
-            $('#errorMessage').removeClass('d-none');
-        } else {
-            $('#errorMessage').addClass('d-none');
-        }
-
         $.ajax({
             type: 'POST',
             url: '../Controller/addUser.php',
@@ -62,6 +56,9 @@ $(document).ready(function() {
                     $('#addUserModal').modal('hide');
                     clearForm();
                     addUser(data.userData);
+                    $('#errorMessage').addClass('d-none');
+                } else {
+                    $('#errorMessage').text(data.error.message).removeClass('d-none');
                 }
             }
         })
@@ -162,6 +159,9 @@ $(document).ready(function() {
                     clearForm();
                     updateTableRow(data.userData);
                     bindCheckboxEvents();
+                    $('#updateMessage').addClass('d-none');
+                } else {
+                    $('#updateMessage').text(data.error.message).removeClass('d-none');
                 }
             }
         });
@@ -189,17 +189,17 @@ $(document).ready(function() {
             return $(this).closest('tr').find('button[data-target="#deleteUserModal"]').data('user-id');
         }).get();
 
-        if (userIds.length === 0) {
-            $('#userWarning').removeClass('d-none');
-        } else {
-            $('#userWarning').addClass('d-none');
-        }
-
-        if (action === '-Please-select-') {
-            $('#actionWarning').removeClass('d-none');
-        } else {
-            $('#actionWarning').addClass('d-none');
-        }
+        // if (userIds.length === 0) {
+        //     $('#userWarning').removeClass('d-none');
+        // } else {
+        //     $('#userWarning').addClass('d-none');
+        // }
+        //
+        // if (action === '-Please-select-') {
+        //     $('#actionWarning').removeClass('d-none');
+        // } else {
+        //     $('#actionWarning').addClass('d-none');
+        // }
 
         if (action === 'delete') {
             $('#selectedUsersCount').text(userIds.length);
@@ -228,6 +228,9 @@ $(document).ready(function() {
                             $('input[name="users[]"]').prop('checked', false);
                             $('.setStatus').val('-Please-select-');
                             updateCheckboxes();
+                            $('#actionWarning').addClass('d-none');
+                        } else {
+                            $('#actionWarning').text(data.error).removeClass('d-none');
                         }
                     }
                 });
@@ -258,6 +261,9 @@ $(document).ready(function() {
                         $('input[name="users[]"]').prop('checked', false);
                         $('.setStatus').val('-Please-select-');
                         updateCheckboxes();
+                        $('#actionWarning').addClass('d-none');
+                    } else {
+                        $('#actionWarning').text(data.error).removeClass('d-none');
                     }
                 }
             });

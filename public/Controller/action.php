@@ -21,7 +21,7 @@ if(isset($_POST['action']) && isset($_POST['userIds'])) {
                 $query = "DELETE FROM users WHERE id = $userId";
                 break;
             default:
-                $response = array('status' => false, 'error' => 'Invalid action');
+                $response = array('status' => false, 'error' => 'Please select action');
                 echo json_encode($response);
                 exit();
         }
@@ -36,6 +36,6 @@ if(isset($_POST['action']) && isset($_POST['userIds'])) {
     $response = array('status' => true, 'error' => null, 'action' => $action, 'userIds' => $selectedUserIds);
     echo json_encode($response);
 } else {
-    $response = array('status' => false, 'error' => 'Missing required data');
+    $response = array('status' => false, 'error' => 'Please select at least one user');
     echo json_encode($response);
 }

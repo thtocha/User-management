@@ -9,7 +9,7 @@
             </div>
             <form id="addUsers" method="post" action="../../Controller/addUser.php">
                 <div class="modal-body">
-                    <div id="errorMessage" class="alert alert-warning d-none">Missing required fields</div>
+                    <div id="errorMessage" class="alert alert-warning d-none"></div>
 
                     <div class="mb-3">
                         <label for="">First name</label>

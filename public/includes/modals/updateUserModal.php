@@ -9,7 +9,7 @@
             </div>
             <form id="updateUsers" method="post" action="../../Controller/updateUser.php">
                 <div class="modal-body">
-                    <div id="errorMessage" class="alert alert-warning d-none"></div>
+                    <div id="updateMessage" class="alert alert-warning d-none"></div>
 
                     <div class="mb-3">
                         <label for="">First name</label>
