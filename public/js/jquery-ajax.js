@@ -89,6 +89,8 @@ $(document).ready(function() {
                     $('table#myTable tbody tr').filter(function () {
                         return $(this).find('button[data-target="#deleteUserModal"]').data('user-id') == deletedUserId;
                     }).remove();
+                } else {
+                    $('#deleteUserModal .modal-body #deleteMessage').text(data.error.message).removeClass('d-none');
                 }
             }
         });

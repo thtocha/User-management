@@ -6,6 +6,7 @@
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             </div>
             <div class="modal-body">
+                <div id="deleteMessage" class="alert alert-danger d-none"></div>
                 <p>Are you sure you want to delete <?= $user['first_name'] . ' ' . $user['last_name'];?></p>
             </div>
             <input type="hidden" id="delete_id">

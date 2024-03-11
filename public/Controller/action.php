@@ -10,6 +10,15 @@ if(isset($_POST['action']) && isset($_POST['userIds'])) {
             continue;
         }
 
+        $check_query = "SELECT id FROM users WHERE id = '$userId'";
+        $result = mysqli_query($con, $check_query);
+
+        if (!$result || mysqli_num_rows($result) === 0) {
+            $response = array('status' => false, 'error' => 'User not found');
+            echo json_encode($response);
+            exit();
+        }
+
         switch ($action) {
             case 'active':
                 $query = "UPDATE users SET status = 1 WHERE id = $userId";

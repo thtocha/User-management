@@ -26,6 +26,20 @@ if(isset($_POST['first_name']) && isset($_POST['last_name']) && isset($_POST['st
         $response = array('status' => false, 'error' => array('code' => 400, 'message' => 'Following fields are required: ' . implode(', ', $errors)));
         echo json_encode($response);
     } else {
+        $check_query = "SELECT id FROM users WHERE id = '$user_id'";
+        $result = mysqli_query($con, $check_query);
+
+        if (!$result) {
+            $response = array('status' => false, 'error' => array('code' => 500, 'message' => mysqli_error($con)));
+            echo json_encode($response);
+            exit();
+        }
+
+        if (mysqli_num_rows($result) === 0) {
+            $response = array('status' => false, 'error' => array('code' => 100, 'message' => 'User not found'));
+            echo json_encode($response);
+            exit();
+        }
         $query = "UPDATE users SET first_name = '$first_name', last_name = '$last_name', status = '$status', role = '$role' WHERE id = '$user_id'";
 
         if (mysqli_query($con, $query)) {
@@ -47,7 +61,4 @@ if(isset($_POST['first_name']) && isset($_POST['last_name']) && isset($_POST['st
             echo json_encode($response);
         }
     }
-} else {
-    $response = array('status' => false, 'error' => array('code' => 400, 'message' => 'Missing required fields'));
-    echo json_encode($response);
 }
