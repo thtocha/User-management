@@ -133,7 +133,9 @@ $(document).ready(function() {
         $('#updateUserModal input[name=last_name]').val(fullName[1]);
         let status = $(this).data('status');
         $('#updateUserModal #customSwitch2').prop('checked', status == 1);
-        $('#updateUserModal #role').val(row.find('td:eq(2)').text().trim());
+        let roleText = row.find('td:eq(2)').text().trim();
+        let roleId = roleText == 'Admin' ? 1 : 2;
+        $('#updateUserModal #role').val(roleId);
     });
 
     $('#updateUsers').submit(function (e) {
@@ -188,18 +190,6 @@ $(document).ready(function() {
         let userIds = $('input[name="users[]"]:checked').map(function(){
             return $(this).closest('tr').find('button[data-target="#deleteUserModal"]').data('user-id');
         }).get();
-
-        // if (userIds.length === 0) {
-        //     $('#userWarning').removeClass('d-none');
-        // } else {
-        //     $('#userWarning').addClass('d-none');
-        // }
-        //
-        // if (action === '-Please-select-') {
-        //     $('#actionWarning').removeClass('d-none');
-        // } else {
-        //     $('#actionWarning').addClass('d-none');
-        // }
 
         if (action === 'delete') {
             $('#selectedUsersCount').text(userIds.length);

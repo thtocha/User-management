@@ -1,5 +1,6 @@
 <?php
 require '../dbcon.php';
+require '../config.php';
 
 if(isset($_POST['first_name']) && isset($_POST['last_name']) && isset($_POST['status']) && isset($_POST['role']) && isset($_POST['user_id']))
 {
@@ -31,18 +32,18 @@ if(isset($_POST['first_name']) && isset($_POST['last_name']) && isset($_POST['st
             $response = array(
                 'status' => true,
                 'error' => null,
-                'oldUserId' => $user_id,
                 'userData' => array(
                     'id' => $user_id,
                     'first_name' => $first_name,
                     'last_name' => $last_name,
                     'status' => $status,
-                    'role' => $role
+                    'role' => $roles[$role],
+                    'role_id' => $role
                 )
             );
             echo json_encode($response);
         } else {
-            $response = array('status' => false, 'error' => array('code' => 500, 'message' => 'Failed to update user'));
+            $response = array('status' => false, 'error' => array('code' => 500, 'message' => mysqli_error($con)));
             echo json_encode($response);
         }
     }

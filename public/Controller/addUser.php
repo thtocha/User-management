@@ -1,6 +1,6 @@
 <?php
-
 require '../dbcon.php';
+require_once '../config.php';
 
 if(isset($_POST['first_name']) && isset($_POST['last_name']) && isset($_POST['status']) && isset($_POST['role']))
 {
@@ -33,7 +33,8 @@ if(isset($_POST['first_name']) && isset($_POST['last_name']) && isset($_POST['st
                 'first_name' => $first_name,
                 'last_name' => $last_name,
                 'status' => $status,
-                'role' => $role
+                'role' => $roles[$role],
+                'role_id' => $role
             );
             $response = array('status' => true, 'error' => null ,'userData' => $userData);
             echo json_encode($response);

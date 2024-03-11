@@ -29,10 +29,11 @@
                     <div class="mb-3">
                         <label for="role">Role</label>
                         <div>
-                            <select class="custom-select" id="role" name="role" style="width: 155px">
+                            <select class="custom-select" id="role" style="width: 155px">
                                 <option selected>-Please-select-</option>
-                                <option value="user">User</option>
-                                <option value="admin">Admin</option>
+                                <?php foreach ($roles as $roleId => $roleName): ?>
+                                    <option value="<?= $roleId; ?>"><?= $roleName; ?></option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
                     </div>

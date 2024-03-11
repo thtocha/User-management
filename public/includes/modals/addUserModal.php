@@ -31,8 +31,9 @@
                         <div>
                             <select class="custom-select" id="role" style="width: 155px">
                                 <option selected>-Please-select-</option>
-                                <option value="user">User</option>
-                                <option value="admin">Admin</option>
+                                <?php foreach ($roles as $roleId => $roleName): ?>
+                                    <option value="<?php echo $roleId; ?>"><?php echo $roleName; ?></option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
                     </div>

@@ -35,7 +35,6 @@
     </div>
 
 </div>
-
 <!--Add Modal-->
 <?php include "includes/modals/addUserModal.php"; ?>
 <!--Update modal-->
