@@ -51,8 +51,7 @@ if(isset($_POST['first_name']) && isset($_POST['last_name']) && isset($_POST['st
                     'first_name' => $first_name,
                     'last_name' => $last_name,
                     'status' => $status,
-                    'role' => $roles[$role],
-                    'role_id' => $role
+                    'role' => $role,
                 )
             );
             echo json_encode($response);

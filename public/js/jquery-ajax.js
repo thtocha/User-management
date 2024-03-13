@@ -1,4 +1,13 @@
 $(document).ready(function() {
+    function bindCheckboxEvents() {
+        $('input[name="users[]"]').change(function () {
+            let anyUnchecked = $('input[name="users[]"]:not(:checked)').length > 0;
+            $('#checkAll').prop('checked', !anyUnchecked);
+        });
+        $('#checkAll').change(function () {
+            updateCheckboxes();
+        });
+    }
     bindCheckboxEvents();
     function clearForm() {
         $('input[name=first_name]').val('');
@@ -11,7 +20,9 @@ $(document).ready(function() {
         let row = '<tr>' +
             '<td><input type="checkbox" name="users[]" data-user-id="' + userData.id + '"></td>' +
             '<td>' + userData.first_name + ' ' + userData.last_name + '</td>' +
-            '<td>' + userData.role + '</td>' +
+            '<td>' +
+            (userData.role == 1 ? '<div>Admin</div>' : '<div>User</div>') +
+            '</td>' +
             '<td style="vertical-align: middle; text-align: center">' +
             '<div class="d-flex justify-content-center">' +
             (userData.status == 1 ? '<div style="width: 20px; height: 20px; border-radius: 50%; background-color: green;"></div>' :
@@ -57,11 +68,17 @@ $(document).ready(function() {
                     clearForm();
                     addUser(data.userData);
                     $('#errorMessage').addClass('d-none');
+                    $('input[name="users[]"]').prop('checked', false);
+                    updateCheckboxes();
+
+                    if ($('#myTable tbody tr').length > 0) {
+                        $('#noUsersFound').addClass('d-none');
+                    }
                 } else {
                     $('#errorMessage').text(data.error.message).removeClass('d-none');
                 }
             }
-        })
+        });
     });
 
     $('#myTable').on('click', 'button[data-target="#deleteUserModal"]', function () {
@@ -89,6 +106,13 @@ $(document).ready(function() {
                     $('table#myTable tbody tr').filter(function () {
                         return $(this).find('button[data-target="#deleteUserModal"]').data('user-id') == deletedUserId;
                     }).remove();
+                    $('input[name="users[]"]').prop('checked', false);
+                    updateCheckboxes();
+                    if ($('#userTable tbody tr').length > 0) {
+                        $('#noUsersFound').addClass('d-none');
+                    } else {
+                        $('#noUsersFound').removeClass('d-none');
+                    }
                 } else {
                     $('#deleteUserModal .modal-body #deleteMessage').text(data.error.message).removeClass('d-none');
                 }
@@ -104,7 +128,9 @@ $(document).ready(function() {
         let newRow = $('<tr>')
             .append($('<td>').html('<input type="checkbox" name="users[]" data-user-id="' + userData.id + '">'))
             .append($('<td>').text(userData.first_name + ' ' + userData.last_name))
-            .append($('<td>').text(userData.role))
+            .append($('<td>')
+                .append((userData.role == 1 ? $('<div>Admin</div>') : $('<div>User</div>')))
+            )
             .append($('<td style="vertical-align: middle; text-align: center">')
                 .append($('<div class="d-flex justify-content-center">')
                     .append((userData.status == 1 ? $('<div style="width: 20px; height: 20px; border-radius: 50%; background-color: green;"></div>') : $('<div style="width: 20px; height: 20px; border-radius: 50%; background-color: rgb(128,128,128);"></div>')))
@@ -162,8 +188,9 @@ $(document).ready(function() {
                     $('#updateUserModal').modal('hide');
                     clearForm();
                     updateTableRow(data.userData);
-                    bindCheckboxEvents();
                     $('#updateMessage').addClass('d-none');
+                    $('input[name="users[]"]').prop('checked', false);
+                    updateCheckboxes();
                 } else {
                     $('#updateMessage').text(data.error.message).removeClass('d-none');
                 }
@@ -174,16 +201,6 @@ $(document).ready(function() {
     function updateCheckboxes() {
         let isChecked = $('#checkAll').prop('checked');
         $('input[name = "users[]"]').prop('checked', isChecked);
-    }
-
-    function bindCheckboxEvents() {
-        $('input[name="users[]"]').change(function () {
-            let anyUnchecked = $('input[name="users[]"]:not(:checked)').length > 0;
-            $('#checkAll').prop('checked', !anyUnchecked);
-        });
-        $('#checkAll').change(function () {
-            updateCheckboxes();
-        });
     }
 
     $(document).on('click', '#ok',function(e) {
@@ -217,8 +234,15 @@ $(document).ready(function() {
 
                                 row.remove();
                             });
+
+                            if ($('#userTable tbody tr').length > 0) {
+                                $('#noUsersFound').addClass('d-none');
+                            } else {
+                                $('#noUsersFound').removeClass('d-none');
+                            }
                             $('input[name="users[]"]').prop('checked', false);
                             $('.setStatus').val('-Please-select-');
+                            $('#checkAll').prop('checked', false);
                             updateCheckboxes();
                             $('#actionWarning').addClass('d-none');
                         } else {
@@ -252,6 +276,7 @@ $(document).ready(function() {
                         });
                         $('input[name="users[]"]').prop('checked', false);
                         $('.setStatus').val('-Please-select-');
+                        $('#checkAll').prop('checked', false);
                         updateCheckboxes();
                         $('#actionWarning').addClass('d-none');
                     } else {

@@ -1,4 +1,4 @@
-<div id="deleteUserModal" class="modal fade">
+<div id="deleteUserModal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -7,7 +7,7 @@
             </div>
             <div class="modal-body">
                 <div id="deleteMessage" class="alert alert-danger d-none"></div>
-                <p>Are you sure you want to delete <?= $user['first_name'] . ' ' . $user['last_name'];?></p>
+                <p></p>
             </div>
             <input type="hidden" id="delete_id">
             <div class="modal-footer">

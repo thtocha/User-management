@@ -39,5 +39,5 @@ if (mysqli_num_rows($query_run) > 0) {
             </tr>';
     }
 } else {
-    echo '<tr><td colspan="5">No users found</td></tr>';
+    echo '<tr><td class="" id="noUsersFound" colspan="5">No users found</td></tr>';
 }

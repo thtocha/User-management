@@ -30,7 +30,6 @@
                 </tbody>
             </table>
             <?php include "manipulation.php"; ?>
-
         </div>
     </div>
 
