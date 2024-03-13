@@ -23,10 +23,9 @@ $(document).ready(function() {
             '<td>' +
             (userData.role == 1 ? '<div>Admin</div>' : '<div>User</div>') +
             '</td>' +
-            '<td style="vertical-align: middle; text-align: center">' +
+            '<td>' +
             '<div class="d-flex justify-content-center">' +
-            (userData.status == 1 ? '<div style="width: 20px; height: 20px; border-radius: 50%; background-color: green;"></div>' :
-                '<div style="width: 20px; height: 20px; border-radius: 50%; background-color: rgb(128,128,128);"></div>') +
+            (userData.status == 1 ? '<div class="active"></div>' : '<div class="notActive"></div>') +
             '</div>' +
             '</td>' +
             '<td>' +
@@ -129,9 +128,9 @@ $(document).ready(function() {
             .append($('<td>')
                 .append((userData.role == 1 ? $('<div>Admin</div>') : $('<div>User</div>')))
             )
-            .append($('<td style="vertical-align: middle; text-align: center">')
+            .append($('<td>')
                 .append($('<div class="d-flex justify-content-center">')
-                    .append((userData.status == 1 ? $('<div style="width: 20px; height: 20px; border-radius: 50%; background-color: green;"></div>') : $('<div style="width: 20px; height: 20px; border-radius: 50%; background-color: rgb(128,128,128);"></div>')))
+                    .append((userData.status == 1 ? $('<div class="active"></div>') : $('<div class="notActive"></div>')))
                 )
             )
             .append($('<td>')
@@ -269,7 +268,7 @@ $(document).ready(function() {
                                 return $(this).find('button[data-target="#deleteUserModal"]').data('user-id') == userId;
                             });
                             let newStatus = data.action === 'active' ? 1 : 0;
-                            row.find('td:eq(3)').html('<div class="d-flex justify-content-center">' + (newStatus == 1 ? '<div style="width: 20px; height: 20px; border-radius: 50%; background-color: green;"></div>' : '<div style="width: 20px; height: 20px; border-radius: 50%; background-color: rgb(128,128,128);"></div>') + '</div>');
+                            row.find('td:eq(3)').html('<div class="d-flex justify-content-center">' + (newStatus == 1 ? '<div class="active"></div>' : '<div class="notActive"></div>') + '</div>');
 
                         });
                         $('input[name="users[]"]').prop('checked', false);

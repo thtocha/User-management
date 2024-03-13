@@ -10,12 +10,12 @@ if (mysqli_num_rows($query_run) > 0) {
                 <td><input type="checkbox" name="users[]"></td>
                 <td>' . $user['first_name'] . ' ' . $user['last_name'] . '</td>
                 <td>' . $roles[$user['role']] . '</td>
-                <td style="vertical-align: middle; text-align: center">
+                <td>
                     <div class="d-flex justify-content-center">';
         if ($user['status'] == 1) {
-            echo '<div style="width: 20px; height: 20px; border-radius: 50%; background-color: green;" ></div>';
+            echo '<div class="active"></div>';
         } else {
-            echo '<div style="width: 20px; height: 20px; border-radius: 50%; background-color: rgb(128,128,128);"></div>';
+            echo '<div class="notActive"></div>';
         }
         echo '      </div>
                 </td>
