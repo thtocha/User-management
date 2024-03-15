@@ -35,13 +35,8 @@
     </div>
 
 </div>
-<!--Add Modal-->
-<?php include "includes/modals/addUserModal.php"; ?>
-<!--Update modal-->
-<?php include "includes/modals/updateUserModal.php"; ?>
-<!--Delete Modal-->
+<?php include "includes/modals/userModal.php"; ?>
 <?php include "includes/modals/deleteUserModal.php"; ?>
-<!--Delete Group Modal-->
 <?php include "includes/modals/deleteGroupModal.php"; ?>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"

@@ -1,14 +1,12 @@
 <?php
 require '../dbcon.php';
 require_once '../config.php';
-
-if(isset($_POST['first_name']) && isset($_POST['last_name']) && isset($_POST['status']) && isset($_POST['role']))
+if(isset($_POST['first_name']) && isset($_POST['last_name']) && isset($_POST['role']))
 {
     $first_name = mysqli_real_escape_string($con, $_POST['first_name']);
     $last_name = mysqli_real_escape_string($con, $_POST['last_name']);
     $status = mysqli_real_escape_string($con, $_POST['status']);
     $role = mysqli_real_escape_string($con, $_POST['role']);
-
     $errors = array();
     if(empty($first_name)) {
         $errors[] = 'First name';
@@ -29,7 +27,7 @@ if(isset($_POST['first_name']) && isset($_POST['last_name']) && isset($_POST['st
 
         if (mysqli_query($con, $query)) {
             $userData = array(
-                'id' => mysqli_insert_id($con),
+                'user_id' => mysqli_insert_id($con),
                 'first_name' => $first_name,
                 'last_name' => $last_name,
                 'status' => $status,

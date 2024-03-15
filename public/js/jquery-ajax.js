@@ -12,13 +12,91 @@ $(document).ready(function() {
     function clearForm() {
         $('input[name=first_name]').val('');
         $('input[name=last_name]').val('');
-        $('#customSwitch1').prop('checked', false);
+        $('#customSwitch').prop('checked', false);
         $('#role').val('-Please-select-');
     }
 
+    $(document).on('click', '#add', function () {
+        showUserModal('add')
+    })
+
+    $(document).on('click', '#edit', function () {
+        showUserModal('update', {
+            user_id: $(this).data('user-id'),
+            first_name: $(this).data('user-name').split(' ')[0],
+            last_name: $(this).data('user-name').split(' ')[1],
+            status: $(this).data('status'),
+            role: $(this).data('user-role')
+        })
+    })
+
+    function showUserModal(mode, userData = null) {
+        let modal = $('#userModal');
+        let modalTitle = $('#userModalLabel');
+        let submitBtn = $('#userModalSubmit');
+        let form = $('#userForm');
+
+        if (mode === 'add') {
+            modalTitle.text('Add User');
+            submitBtn.text('Add');
+            form.attr('action', '../Controller/addUser.php');
+            clearForm();
+
+        } else if (mode === 'update') {
+            modalTitle.text('Update User');
+            submitBtn.text('Update');
+            modal.find('#user_id').val(userData.user_id);
+            modal.find('#first_name').val(userData.first_name);
+            modal.find('#last_name').val(userData.last_name);
+            modal.find('#status').prop('checked', userData.status == 1);
+            modal.find('#role').val(userData.role);
+            form.attr('action', '../Controller/updateUser.php');
+        }
+        modal.modal('show');
+    }
+
+    $('#userForm').on('submit', function (e) {
+        e.preventDefault();
+        const formData = {
+            first_name: $('#first_name').val(),
+            last_name: $('#last_name').val(),
+            status: $('#status').prop('checked') ? 1 : 0,
+            role: $('#role').val(),
+            user_id: $('#user_id').val()
+        };
+
+        const url = $(this).attr('action');
+
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: formData,
+            success: function (data) {
+                const dataJson = JSON.parse(data);
+                if (dataJson.status) {
+                    $('#userModal').modal('hide');
+                    clearForm();
+
+                    if (url.includes('addUser')) {
+                        addUser(dataJson.userData);
+                    } else {
+                        updateTableRow(formData);
+                    }
+
+                    $('#errorMessage').addClass('d-none');
+                    $('input[name="users[]"]').prop('checked', false);
+                    updateCheckboxes();
+
+                    if ($('#myTable tbody tr').length > 0) {
+                        $('#noUsersFound').addClass('d-none');
+                    }
+                }
+            },
+        });
+    });
     function addUser(userData) {
         let row = '<tr>' +
-            '<td><input type="checkbox" name="users[]" data-user-id="' + userData.id + '"></td>' +
+            '<td><input type="checkbox" name="users[]" data-user-id="' + userData.user_id + '"></td>' +
             '<td>' + userData.first_name + ' ' + userData.last_name + '</td>' +
             '<td>' +
             (userData.role == 1 ? '<div>Admin</div>' : '<div>User</div>') +
@@ -31,10 +109,11 @@ $(document).ready(function() {
             '<td>' +
             '<div class="d-flex justify-content-center">' +
             '<div class="btn-group text-center">' +
-            '<button type="button" data-target="#updateUserModal" data-user-id="' + userData.id + '" data-user-name="' + userData.first_name + ' ' + userData.last_name + '" data-status="' + userData.status + '" class="btn btn-outline-dark" data-toggle="modal">' +
+            '<input type="hidden" data-user-id="' + userData.user_id + '">'+
+            '<button type="button" id="edit" data-target="#updateUserModal" data-user-id="' + userData.user_id + '" data-user-name="' + userData.first_name + ' ' + userData.last_name + '" data-status="' + userData.status + '" data-user-role="' + userData.role + '" class="btn btn-outline-dark" data-toggle="modal">' +
             '<i class="bi bi-pencil"></i>' +
             '</button>' +
-            '<button type="button" data-target="#deleteUserModal" data-user-id="' + userData.id + '" data-user-name="' + userData.first_name + ' ' + userData.last_name + '" class="btn btn-outline-dark" data-toggle="modal">' +
+            '<button type="button" data-target="#deleteUserModal" data-user-id="' + userData.user_id + '" data-user-name="' + userData.first_name + ' ' + userData.last_name + '" class="btn btn-outline-dark" data-toggle="modal">' +
             '<i class="bi bi-trash"></i>' +
             '</button>' +
             '</div>' +
@@ -42,42 +121,9 @@ $(document).ready(function() {
             '</td>' +
             '</tr>';
         $('#myTable tbody').append(row);
+
         bindCheckboxEvents();
     }
-    $('#addUsers').submit(function(e) {
-        e.preventDefault();
-        let formData = {
-            first_name: $('input[name=first_name]').val(),
-            last_name: $('input[name=last_name]').val(),
-            status: $('#customSwitch1').prop('checked') ? 1 : 0,
-            role: $('#role').val()
-        };
-
-        $.ajax({
-            type: 'POST',
-            url: '../Controller/addUser.php',
-            data: formData,
-            dataType: 'json',
-            encode: true,
-            success: function(data) {
-                if (data.status) {
-                    $('#addUserModal').modal('hide');
-                    clearForm();
-                    addUser(data.userData);
-                    $('#errorMessage').addClass('d-none');
-                    $('input[name="users[]"]').prop('checked', false);
-                    updateCheckboxes();
-
-                    if ($('#myTable tbody tr').length > 0) {
-                        $('#noUsersFound').addClass('d-none');
-                    }
-                } else {
-                    $('#errorMessage').text(data.error.message).removeClass('d-none');
-                }
-            }
-        });
-    });
-
     $('#myTable').on('click', 'button[data-target="#deleteUserModal"]', function () {
         let userName = $(this).data('user-name');
         $('#deleteUserModal .modal-body p').text('Are you sure you want to delete ' + userName + '?');
@@ -100,30 +146,27 @@ $(document).ready(function() {
                     $('#deleteUserModal').modal('hide');
                     $('#deleteUserModal #delete_id').val('');
                     let deletedUserId = data.user.user_id;
-                    $('table#myTable tbody tr').filter(function () {
+                    $('#myTable tbody tr').filter(function () {
                         return $(this).find('button[data-target="#deleteUserModal"]').data('user-id') == deletedUserId;
                     }).remove();
                     $('input[name="users[]"]').prop('checked', false);
                     updateCheckboxes();
-                    if ($('#userTable tbody tr').length > 0) {
-                        $('#noUsersFound').addClass('d-none');
-                    } else {
+                    if ($('#myTable tbody tr.userRow').length == 0) {
                         $('#noUsersFound').removeClass('d-none');
                     }
+
                 } else {
                     $('#deleteUserModal .modal-body #deleteMessage').text(data.error.message).removeClass('d-none');
                 }
             }
         });
     });
-
     function updateTableRow(userData) {
-        let oldRow = $('#myTable tbody tr').filter(function () {
-            return $(this).find('button[data-target="#updateUserModal"]').data('user-id') == userData.id;
+        let oldRow = $('#myTable tbody tr').filter(function (index, data) {
+            return $(this).find('button[data-target="#updateUserModal"]').data('user-id') == userData.user_id;
         });
-
         let newRow = $('<tr>')
-            .append($('<td>').html('<input type="checkbox" name="users[]" data-user-id="' + userData.id + '">'))
+            .append($('<td>').html('<input type="checkbox" name="users[]" data-user-id="' + userData.user_id + '">'))
             .append($('<td>').text(userData.first_name + ' ' + userData.last_name))
             .append($('<td>')
                 .append((userData.role == 1 ? $('<div>Admin</div>') : $('<div>User</div>')))
@@ -136,65 +179,18 @@ $(document).ready(function() {
             .append($('<td>')
                 .append($('<div class="d-flex justify-content-center">')
                     .append($('<div class="btn-group text-center">')
-                        .append($('<button type="button" data-target="#updateUserModal" data-user-id="' + userData.id + '" data-user-name="' + userData.first_name + ' ' + userData.last_name + '" data-status="' + userData.status + '" class="btn btn-outline-dark" data-toggle="modal">')
+                        .append($('<button type="button" id="edit" data-target="#updateUserModal" data-user-id="' + userData.user_id + '" data-user-name="' + userData.first_name + ' ' + userData.last_name + '" data-status="' + userData.status + '" data-user-role="' + userData.role + '" class="btn btn-outline-dark" data-toggle="modal">')
                             .append($('<i class="bi bi-pencil"></i>'))
                         )
-                        .append($('<button type="button" data-target="#deleteUserModal" data-user-id="' + userData.id + '" data-user-name="' + userData.first_name + ' ' + userData.last_name + '" data-status="' + userData.status + '" class="btn btn-outline-dark" data-toggle="modal">')
+                        .append($('<button type="button" data-target="#deleteUserModal" data-user-id="' + userData.user_id + '" data-user-name="' + userData.first_name + ' ' + userData.last_name + '" data-status="' + userData.status + '" class="btn btn-outline-dark" data-toggle="modal">')
                             .append($('<i class="bi bi-trash"></i>'))
                         )
                     )
                 )
             );
-
         oldRow.replaceWith(newRow);
         bindCheckboxEvents();
     }
-
-    $('#myTable').on('click', 'button[data-target="#updateUserModal"]', function () {
-        let row = $(this).closest('tr');
-        $('#updateUserModal #update_id').val($(this).data('user-id'));
-        let fullName = row.find('td:eq(1)').text().trim().split(' ');
-        $('#updateUserModal input[name=first_name]').val(fullName[0]);
-        $('#updateUserModal input[name=last_name]').val(fullName[1]);
-        let status = $(this).data('status');
-        $('#updateUserModal #customSwitch2').prop('checked', status == 1);
-        let roleText = row.find('td:eq(2)').text().trim();
-        let roleId = roleText == 'Admin' ? 1 : 2;
-        $('#updateUserModal #role').val(roleId);
-    });
-
-    $('#updateUsers').submit(function (e) {
-        e.preventDefault();
-
-        let formData = {
-            first_name: $('#updateUserModal input[name=first_name]').val(),
-            last_name: $('#updateUserModal input[name=last_name]').val(),
-            status: $('#updateUserModal #customSwitch2').prop('checked') ? 1 : 0,
-            role: $('#updateUserModal #role').val(),
-            user_id: $('#update_id').val()
-        };
-
-        $.ajax({
-            type: 'POST',
-            url: '../Controller/updateUser.php',
-            data: formData,
-            dataType: 'json',
-            encode: true,
-            success: function (data) {
-                if (data.status) {
-                    $('#updateUserModal').modal('hide');
-                    clearForm();
-                    updateTableRow(data.userData);
-                    $('#updateMessage').addClass('d-none');
-                    $('input[name="users[]"]').prop('checked', false);
-                    updateCheckboxes();
-                } else {
-                    $('#updateMessage').text(data.error.message).removeClass('d-none');
-                }
-            }
-        });
-    });
-
     function updateCheckboxes() {
         let isChecked = $('#checkAll').prop('checked');
         $('input[name = "users[]"]').prop('checked', isChecked);
@@ -232,9 +228,7 @@ $(document).ready(function() {
                                 row.remove();
                             });
 
-                            if ($('#userTable tbody tr').length > 0) {
-                                $('#noUsersFound').addClass('d-none');
-                            } else {
+                            if ($('#myTable tbody tr.userRow').length == 0) {
                                 $('#noUsersFound').removeClass('d-none');
                             }
                             $('input[name="users[]"]').prop('checked', false);

@@ -1,6 +1,6 @@
 <div class="block" id="block">
     <div class="d-flex">
-        <button class="btn btn-primary" id="add" data-toggle="modal" data-target="#addUserModal">Add</button>
+        <button class="btn btn-primary" id="add" data-toggle="modal" data-target="#userModal">Add</button>
         <select class="custom-select setStatus">
             <option selected>-Please-select-</option>
             <option value="active">Set active</option>
