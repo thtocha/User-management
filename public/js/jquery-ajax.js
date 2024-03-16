@@ -13,6 +13,7 @@ $(document).ready(function() {
         $('input[name=first_name]').val('');
         $('input[name=last_name]').val('');
         $('#customSwitch').prop('checked', false);
+        $('#status').prop('checked', false);
         $('#role').val('-Please-select-');
     }
 
@@ -21,12 +22,13 @@ $(document).ready(function() {
     })
 
     $(document).on('click', '#edit', function () {
+        const row = $(this).closest('tr.userRow');
         showUserModal('update', {
-            user_id: $(this).data('user-id'),
-            first_name: $(this).data('user-name').split(' ')[0],
-            last_name: $(this).data('user-name').split(' ')[1],
-            status: $(this).data('status'),
-            role: $(this).data('user-role')
+            user_id: row.data('user-id'),
+            first_name: row.data('user-name').split(' ')[0],
+            last_name: row.data('user-name').split(' ')[1],
+            status: row.data('status'),
+            role: row.data('user-role')
         })
     })
 
@@ -95,7 +97,7 @@ $(document).ready(function() {
         });
     });
     function addUser(userData) {
-        let row = '<tr>' +
+        let row = '<tr class="userRow" data-user-id="' + userData.user_id + '" data-user-name="' + userData.first_name + ' ' + userData.last_name + '" data-status="' + userData.status + '" data-user-role="' + userData.role + '">' +
             '<td><input type="checkbox" name="users[]" data-user-id="' + userData.user_id + '"></td>' +
             '<td>' + userData.first_name + ' ' + userData.last_name + '</td>' +
             '<td>' +
@@ -109,11 +111,10 @@ $(document).ready(function() {
             '<td>' +
             '<div class="d-flex justify-content-center">' +
             '<div class="btn-group text-center">' +
-            '<input type="hidden" data-user-id="' + userData.user_id + '">'+
-            '<button type="button" id="edit" data-target="#updateUserModal" data-user-id="' + userData.user_id + '" data-user-name="' + userData.first_name + ' ' + userData.last_name + '" data-status="' + userData.status + '" data-user-role="' + userData.role + '" class="btn btn-outline-dark" data-toggle="modal">' +
+            '<button type="button" id="edit" data-target="#updateUserModal" class="btn btn-outline-dark" data-toggle="modal">' +
             '<i class="bi bi-pencil"></i>' +
             '</button>' +
-            '<button type="button" data-target="#deleteUserModal" data-user-id="' + userData.user_id + '" data-user-name="' + userData.first_name + ' ' + userData.last_name + '" class="btn btn-outline-dark" data-toggle="modal">' +
+            '<button type="button" data-target="#deleteUserModal" class="btn btn-outline-dark" data-toggle="modal">' +
             '<i class="bi bi-trash"></i>' +
             '</button>' +
             '</div>' +
@@ -125,9 +126,9 @@ $(document).ready(function() {
         bindCheckboxEvents();
     }
     $('#myTable').on('click', 'button[data-target="#deleteUserModal"]', function () {
-        let userName = $(this).data('user-name');
+        let userName = $(this).closest('tr.userRow').data('user-name');
         $('#deleteUserModal .modal-body p').text('Are you sure you want to delete ' + userName + '?');
-        $('#deleteUserModal #delete_id').val($(this).data('user-id'));
+        $('#deleteUserModal #delete_id').val($(this).closest('tr.userRow').data('user-id'));
     });
 
     $('#deleteUsers').on('submit', function (e){
@@ -147,7 +148,7 @@ $(document).ready(function() {
                     $('#deleteUserModal #delete_id').val('');
                     let deletedUserId = data.user.user_id;
                     $('#myTable tbody tr').filter(function () {
-                        return $(this).find('button[data-target="#deleteUserModal"]').data('user-id') == deletedUserId;
+                        return $(this).closest('tr.userRow').data('user-id') == deletedUserId;
                     }).remove();
                     $('input[name="users[]"]').prop('checked', false);
                     updateCheckboxes();
@@ -162,10 +163,10 @@ $(document).ready(function() {
         });
     });
     function updateTableRow(userData) {
-        let oldRow = $('#myTable tbody tr').filter(function (index, data) {
-            return $(this).find('button[data-target="#updateUserModal"]').data('user-id') == userData.user_id;
+        let oldRow = $('#myTable tbody tr.userRow').filter(function () {
+            return $(this).data('user-id') == userData.user_id;
         });
-        let newRow = $('<tr>')
+        let newRow = $('<tr class="userRow" data-user-id="' + userData.user_id + '" data-user-name="' + userData.first_name + ' ' + userData.last_name + '" data-status="' + userData.status + '" data-user-role="' + userData.role + '">')
             .append($('<td>').html('<input type="checkbox" name="users[]" data-user-id="' + userData.user_id + '">'))
             .append($('<td>').text(userData.first_name + ' ' + userData.last_name))
             .append($('<td>')
@@ -179,10 +180,10 @@ $(document).ready(function() {
             .append($('<td>')
                 .append($('<div class="d-flex justify-content-center">')
                     .append($('<div class="btn-group text-center">')
-                        .append($('<button type="button" id="edit" data-target="#updateUserModal" data-user-id="' + userData.user_id + '" data-user-name="' + userData.first_name + ' ' + userData.last_name + '" data-status="' + userData.status + '" data-user-role="' + userData.role + '" class="btn btn-outline-dark" data-toggle="modal">')
+                        .append($('<button type="button" id="edit" data-target="#updateUserModal" class="btn btn-outline-dark" data-toggle="modal">')
                             .append($('<i class="bi bi-pencil"></i>'))
                         )
-                        .append($('<button type="button" data-target="#deleteUserModal" data-user-id="' + userData.user_id + '" data-user-name="' + userData.first_name + ' ' + userData.last_name + '" data-status="' + userData.status + '" class="btn btn-outline-dark" data-toggle="modal">')
+                        .append($('<button type="button" data-target="#deleteUserModal" class="btn btn-outline-dark" data-toggle="modal">')
                             .append($('<i class="bi bi-trash"></i>'))
                         )
                     )
@@ -200,7 +201,7 @@ $(document).ready(function() {
         e.preventDefault();
         let action = $(this).siblings('.setStatus').val();
         let userIds = $('input[name="users[]"]:checked').map(function(){
-            return $(this).closest('tr').find('button[data-target="#deleteUserModal"]').data('user-id');
+            return $(this).closest('tr.userRow').data('user-id');
         }).get();
 
         if (action === 'delete') {
@@ -222,7 +223,7 @@ $(document).ready(function() {
                         if (data.status) {
                             data.userIds.forEach(function(userId) {
                                 let row = $('#myTable tbody tr').filter(function () {
-                                    return $(this).find('button[data-target="#deleteUserModal"]').data('user-id') == userId;
+                                    return $(this).closest('tr.userRow').data('user-id') == userId;
                                 });
 
                                 row.remove();
@@ -259,7 +260,7 @@ $(document).ready(function() {
                     if (data.status) {
                         data.userIds.forEach(function(userId) {
                             let row = $('#myTable tbody tr').filter(function () {
-                                return $(this).find('button[data-target="#deleteUserModal"]').data('user-id') == userId;
+                                return $(this).closest('tr.userRow').data('user-id') == userId;
                             });
                             let newStatus = data.action === 'active' ? 1 : 0;
                             row.find('td:eq(3)').html('<div class="d-flex justify-content-center">' + (newStatus == 1 ? '<div class="active"></div>' : '<div class="notActive"></div>') + '</div>');

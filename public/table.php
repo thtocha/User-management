@@ -5,7 +5,7 @@ $query = "SELECT * FROM users";
 $query_run = mysqli_query($con, $query);
 
 foreach ($query_run as $user) {
-    echo '<tr class="userRow">
+    echo '<tr class="userRow" data-user-id="' . $user['id'] . '" data-user-name="' . $user['first_name'] . ' ' . $user['last_name'] . '" data-status="' . $user['status'] . '" data-user-role="' . $user['role'] . '">
             <td><input type="checkbox" name="users[]"></td>
             <td>' . $user['first_name'] . ' ' . $user['last_name'] . '</td>
             <td>' . $roles[$user['role']] . '</td>
@@ -21,10 +21,10 @@ foreach ($query_run as $user) {
             <td>
                 <div class="d-flex justify-content-center">
                     <div class="btn-group text-center">
-                        <button type="button" id="edit" data-target="#updateUserModal" data-user-id="' . $user['id'] . '" data-user-name="' . $user['first_name'] . ' ' . $user['last_name'] . '" data-status="' . $user['status'] . '" data-user-role="' . $user['role'] . '" class="btn btn-outline-dark"  data-toggle="modal">
+                        <button type="button" id="edit" data-target="#updateUserModal" class="btn btn-outline-dark"  data-toggle="modal">
                             <i class="bi bi-pencil"></i>
                         </button>
-                        <button type="button" data-target="#deleteUserModal" data-user-id="' . $user['id'] . '" data-user-name="' . $user['first_name'] . ' ' . $user['last_name'] . '" class="btn btn-outline-dark" data-toggle="modal">
+                        <button type="button" data-target="#deleteUserModal" class="btn btn-outline-dark" data-toggle="modal">
                             <i class="bi bi-trash"></i>
                         </button>
                     </div>
@@ -32,4 +32,4 @@ foreach ($query_run as $user) {
             </td>
         </tr>';
 }
-echo '<tr' . (mysqli_num_rows($query_run) > 0 ? ' class="d-none"' : '') . ' ><td id="noUsersFound" colspan="5">No users found</td></tr>';
+echo '<tr id="noUsersFound"' . (mysqli_num_rows($query_run) > 0 ? ' class="d-none"' : '') . ' ><td colspan="5">No users found</td></tr>';
