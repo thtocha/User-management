@@ -92,6 +92,9 @@ $(document).ready(function() {
                     if ($('#myTable tbody tr').length > 0) {
                         $('#noUsersFound').addClass('d-none');
                     }
+                } else {
+                    $('#errorMessage').removeClass('d-none');
+                    $('#errorMessage').text(dataJson.error.message);
                 }
             },
         });
@@ -262,9 +265,9 @@ $(document).ready(function() {
                             let row = $('#myTable tbody tr').filter(function () {
                                 return $(this).closest('tr.userRow').data('user-id') == userId;
                             });
-                            let newStatus = data.action === 'active' ? 1 : 0;
-                            row.find('td:eq(3)').html('<div class="d-flex justify-content-center">' + (newStatus == 1 ? '<div class="active"></div>' : '<div class="notActive"></div>') + '</div>');
 
+                            row.data('status', data.action == 'active' ? 1 : 0);
+                            row.find('td:eq(3)').html('<div class="d-flex justify-content-center">' + (data.action == 'active' ? '<div class="active"></div>' : '<div class="notActive"></div>') + '</div>');
                         });
                         $('input[name="users[]"]').prop('checked', false);
                         $('.setStatus').val('-Please-select-');
