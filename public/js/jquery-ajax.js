@@ -117,7 +117,7 @@ $(document).ready(function() {
             '<button type="button" id="edit" data-target="#updateUserModal" class="btn btn-outline-dark" data-toggle="modal">' +
             '<i class="bi bi-pencil"></i>' +
             '</button>' +
-            '<button type="button" data-target="#deleteUserModal" class="btn btn-outline-dark" data-toggle="modal">' +
+            '<button type="button" data-target="#deleteUsersModal" class="btn btn-outline-dark" data-toggle="modal">' +
             '<i class="bi bi-trash"></i>' +
             '</button>' +
             '</div>' +
@@ -128,43 +128,8 @@ $(document).ready(function() {
 
         bindCheckboxEvents();
     }
-    $('#myTable').on('click', 'button[data-target="#deleteUserModal"]', function () {
-        let userName = $(this).closest('tr.userRow').data('user-name');
-        $('#deleteUserModal .modal-body p').text('Are you sure you want to delete ' + userName + '?');
-        $('#deleteUserModal #delete_id').val($(this).closest('tr.userRow').data('user-id'));
-    });
 
-    $('#deleteUsers').on('submit', function (e){
-        e.preventDefault();
 
-        let form = $(this);
-
-        $.ajax({
-            type: 'POST',
-            url: '../Controller/deleteUser.php',
-            data: form.serialize(),
-            dataType: 'json',
-            encode: true,
-            success: function (data) {
-                if (data.status) {
-                    $('#deleteUserModal').modal('hide');
-                    $('#deleteUserModal #delete_id').val('');
-                    let deletedUserId = data.user.user_id;
-                    $('#myTable tbody tr').filter(function () {
-                        return $(this).closest('tr.userRow').data('user-id') == deletedUserId;
-                    }).remove();
-                    $('input[name="users[]"]').prop('checked', false);
-                    updateCheckboxes();
-                    if ($('#myTable tbody tr.userRow').length == 0) {
-                        $('#noUsersFound').removeClass('d-none');
-                    }
-
-                } else {
-                    $('#deleteUserModal .modal-body #deleteMessage').text(data.error.message).removeClass('d-none');
-                }
-            }
-        });
-    });
     function updateTableRow(userData) {
         let oldRow = $('#myTable tbody tr.userRow').filter(function () {
             return $(this).data('user-id') == userData.user_id;
@@ -186,7 +151,7 @@ $(document).ready(function() {
                         .append($('<button type="button" id="edit" data-target="#updateUserModal" class="btn btn-outline-dark" data-toggle="modal">')
                             .append($('<i class="bi bi-pencil"></i>'))
                         )
-                        .append($('<button type="button" data-target="#deleteUserModal" class="btn btn-outline-dark" data-toggle="modal">')
+                        .append($('<button type="button" data-target="#deleteUsersModal" class="btn btn-outline-dark" data-toggle="modal">')
                             .append($('<i class="bi bi-trash"></i>'))
                         )
                     )
@@ -200,17 +165,40 @@ $(document).ready(function() {
         $('input[name = "users[]"]').prop('checked', isChecked);
     }
 
+    function offSubmit() {
+        $('#deleteUsersModal').on('hidden.bs.modal', function () {
+            $('#deleteUsers').off('submit');
+        });
+    }
+
+    $('#myTable').on('click', 'button[data-target="#deleteUsersModal"]', function (e) {
+        let userName = $(this).closest('tr.userRow').data('user-name');
+        $('#deleteUsersModal .modal-body p.askDelete').text('Are you sure you want to delete ' + userName + '?');
+        $('#deleteUsersModal #delete_id').val($(this).closest('tr.userRow').data('user-id'));
+        let id = ($(this).closest('tr.userRow').data('user-id'));
+        manageUsers('delete', [id])
+    });
+
     $(document).on('click', '#ok',function(e) {
         e.preventDefault();
         let action = $(this).siblings('.setStatus').val();
         let userIds = $('input[name="users[]"]:checked').map(function(){
             return $(this).closest('tr.userRow').data('user-id');
         }).get();
+        let userName = $('input[name="users[]"]:checked').map(function(){
+            return $(this).closest('tr.userRow').data('user-name');
+        }).get();
+        let userMessage = userIds.length === 1 ? userName[0] : userIds.length + ' users';
+        $('#deleteUsersModal .modal-body p.askDelete').text('Are you sure you want to delete ' + userMessage + ' ?');
+        manageUsers(action, userIds);
 
+    });
+
+    function manageUsers(action, userIds) {
         if (action === 'delete') {
-            $('#selectedUsersCount').text(userIds.length);
-            $('#confirmDeleteModal').modal('show');
-            $('#confirmDeleteButton').click(function() {
+            $('#deleteUsersModal').modal('show');
+            $('#deleteUsers').on('submit',function(e) {
+                e.preventDefault();
                 let formData = {
                     action: action,
                     userIds: userIds
@@ -225,13 +213,12 @@ $(document).ready(function() {
                     success: function (data) {
                         if (data.status) {
                             data.userIds.forEach(function(userId) {
-                                let row = $('#myTable tbody tr').filter(function () {
+                                let row = $('#myTable tbody tr').filter(function (e) {
                                     return $(this).closest('tr.userRow').data('user-id') == userId;
                                 });
-
                                 row.remove();
                             });
-
+                            formData.userIds = [];
                             if ($('#myTable tbody tr.userRow').length == 0) {
                                 $('#noUsersFound').removeClass('d-none');
                             }
@@ -239,13 +226,15 @@ $(document).ready(function() {
                             $('.setStatus').val('-Please-select-');
                             $('#checkAll').prop('checked', false);
                             updateCheckboxes();
+                            offSubmit();
                             $('#actionWarning').addClass('d-none');
                         } else {
                             $('#actionWarning').text(data.error).removeClass('d-none');
+                            offSubmit();
                         }
                     }
                 });
-                $('#confirmDeleteModal').modal('hide');
+                $('#deleteUsersModal').modal('hide');
             });
         } else {
             let formData = {
@@ -262,12 +251,13 @@ $(document).ready(function() {
                 success: function (data) {
                     if (data.status) {
                         data.userIds.forEach(function(userId) {
-                            let row = $('#myTable tbody tr').filter(function () {
+                            let row = $('#myTable tbody tr').filter(function (e, data) {
                                 return $(this).closest('tr.userRow').data('user-id') == userId;
                             });
 
                             row.data('status', data.action == 'active' ? 1 : 0);
                             row.find('td:eq(3)').html('<div class="d-flex justify-content-center">' + (data.action == 'active' ? '<div class="active"></div>' : '<div class="notActive"></div>') + '</div>');
+
                         });
                         $('input[name="users[]"]').prop('checked', false);
                         $('.setStatus').val('-Please-select-');
@@ -276,9 +266,10 @@ $(document).ready(function() {
                         $('#actionWarning').addClass('d-none');
                     } else {
                         $('#actionWarning').text(data.error).removeClass('d-none');
+
                     }
                 }
             });
         }
-    });
+    }
 })

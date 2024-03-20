@@ -1,4 +1,4 @@
-<div id="deleteUserModal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div id="deleteUsersModal" class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -7,14 +7,13 @@
             </div>
             <div class="modal-body">
                 <div id="deleteMessage" class="alert alert-danger d-none"></div>
-                <p></p>
+                <p class="askDelete"></p>
             </div>
-            <input type="hidden" id="delete_id">
             <div class="modal-footer">
-                <form action="../../Controller/deleteUser.php" id="deleteUsers" method="post">
+                <form id="deleteUsers" method="post">
                     <input type="hidden" id="delete_id" name="user_id">
                     <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-                    <input type="submit" class="btn btn-danger" value="Delete">
+                    <input type="submit" class="btn btn-danger" id="confirmDelete" value="Delete">
                 </form>
             </div>
         </div>

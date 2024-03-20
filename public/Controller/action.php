@@ -6,9 +6,6 @@ if(isset($_POST['action']) && isset($_POST['userIds'])) {
     $selectedUserIds = $_POST['userIds'];
 
     foreach ($selectedUserIds as $userId) {
-        if (!is_numeric($userId)) {
-            continue;
-        }
 
         $check_query = "SELECT id FROM users WHERE id = '$userId'";
         $result = mysqli_query($con, $check_query);

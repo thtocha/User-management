@@ -24,7 +24,7 @@ foreach ($query_run as $user) {
                         <button type="button" id="edit" data-target="#updateUserModal" class="btn btn-outline-dark"  data-toggle="modal">
                             <i class="bi bi-pencil"></i>
                         </button>
-                        <button type="button" data-target="#deleteUserModal" class="btn btn-outline-dark" data-toggle="modal">
+                        <button type="button" data-target="#deleteUsersModal" class="btn btn-outline-dark" data-toggle="modal">
                             <i class="bi bi-trash"></i>
                         </button>
                     </div>
