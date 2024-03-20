@@ -165,18 +165,10 @@ $(document).ready(function() {
         $('input[name = "users[]"]').prop('checked', isChecked);
     }
 
-    function offSubmit() {
-        $('#deleteUsersModal').on('hidden.bs.modal', function () {
-            $('#deleteUsers').off('submit');
-        });
-    }
-
     $('#myTable').on('click', 'button[data-target="#deleteUsersModal"]', function (e) {
         let userName = $(this).closest('tr.userRow').data('user-name');
-        $('#deleteUsersModal .modal-body p.askDelete').text('Are you sure you want to delete ' + userName + '?');
-        $('#deleteUsersModal #delete_id').val($(this).closest('tr.userRow').data('user-id'));
         let id = ($(this).closest('tr.userRow').data('user-id'));
-        manageUsers('delete', [id])
+        manageUsers('delete', [id], userName)
     });
 
     $(document).on('click', '#ok',function(e) {
@@ -188,88 +180,59 @@ $(document).ready(function() {
         let userName = $('input[name="users[]"]:checked').map(function(){
             return $(this).closest('tr.userRow').data('user-name');
         }).get();
-        let userMessage = userIds.length === 1 ? userName[0] : userIds.length + ' users';
-        $('#deleteUsersModal .modal-body p.askDelete').text('Are you sure you want to delete ' + userMessage + ' ?');
-        manageUsers(action, userIds);
-
+        manageUsers(action, userIds, userName);
     });
 
-    function manageUsers(action, userIds) {
+    function manageUsers(action, userIds, name) {
         if (action === 'delete') {
-            $('#deleteUsersModal').modal('show');
-            $('#deleteUsers').on('submit',function(e) {
-                e.preventDefault();
-                let formData = {
-                    action: action,
-                    userIds: userIds
-                };
-
-                $.ajax({
-                    type: 'POST',
-                    url: '../Controller/action.php',
-                    data: formData,
-                    dataType: 'json',
-                    encode: true,
-                    success: function (data) {
-                        if (data.status) {
-                            data.userIds.forEach(function(userId) {
-                                let row = $('#myTable tbody tr').filter(function (e) {
-                                    return $(this).closest('tr.userRow').data('user-id') == userId;
-                                });
-                                row.remove();
-                            });
-                            formData.userIds = [];
-                            if ($('#myTable tbody tr.userRow').length == 0) {
-                                $('#noUsersFound').removeClass('d-none');
-                            }
-                            $('input[name="users[]"]').prop('checked', false);
-                            $('.setStatus').val('-Please-select-');
-                            $('#checkAll').prop('checked', false);
-                            updateCheckboxes();
-                            offSubmit();
-                            $('#actionWarning').addClass('d-none');
-                        } else {
-                            $('#actionWarning').text(data.error).removeClass('d-none');
-                            offSubmit();
-                        }
-                    }
-                });
-                $('#deleteUsersModal').modal('hide');
-            });
+            let userMessage = userIds.length === 1 ? name : userIds.length + ' users';
+            if (confirm('Are you sure you want to delete ' + userMessage + ' ?')) {
+                groupAction(action, userIds);
+            }
         } else {
-            let formData = {
-                action: action,
-                userIds: userIds
-            };
+            groupAction(action, userIds);
+        }
+    }
 
-            $.ajax({
-                type: 'POST',
-                url: '../Controller/action.php',
-                data: formData,
-                dataType: 'json',
-                encode: true,
-                success: function (data) {
-                    if (data.status) {
-                        data.userIds.forEach(function(userId) {
-                            let row = $('#myTable tbody tr').filter(function (e, data) {
-                                return $(this).closest('tr.userRow').data('user-id') == userId;
-                            });
-
+    function groupAction(action, userIds) {
+        let formData = {
+            action: action,
+            userIds: userIds
+        };
+        $.ajax({
+            type: 'POST',
+            url: '../Controller/action.php',
+            data: formData,
+            dataType: 'json',
+            encode: true,
+            success: function (data) {
+                if (data.status) {
+                    data.userIds.forEach(function(userId) {
+                        let row = $('#myTable tbody tr').filter(function () {
+                            return $(this).closest('tr.userRow').data('user-id') == userId;
+                        });
+                        if (action === 'delete') {
+                            row.remove();
+                        } else {
                             row.data('status', data.action == 'active' ? 1 : 0);
                             row.find('td:eq(3)').html('<div class="d-flex justify-content-center">' + (data.action == 'active' ? '<div class="active"></div>' : '<div class="notActive"></div>') + '</div>');
+                        }
 
-                        });
-                        $('input[name="users[]"]').prop('checked', false);
-                        $('.setStatus').val('-Please-select-');
-                        $('#checkAll').prop('checked', false);
-                        updateCheckboxes();
-                        $('#actionWarning').addClass('d-none');
-                    } else {
-                        $('#actionWarning').text(data.error).removeClass('d-none');
-
+                    });
+                    formData.userIds = [];
+                    if ($('#myTable tbody tr.userRow').length == 0) {
+                        $('#noUsersFound').removeClass('d-none');
                     }
+                    $('input[name="users[]"]').prop('checked', false);
+                    $('.setStatus').val('-Please-select-');
+                    $('#checkAll').prop('checked', false);
+                    updateCheckboxes();
+                    $('#actionWarning').addClass('d-none');
+                } else {
+                    $('#actionWarning').text(data.error).removeClass('d-none');
+
                 }
-            });
-        }
+            }
+        });
     }
 })
