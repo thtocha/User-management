@@ -186,9 +186,13 @@ $(document).ready(function() {
     function manageUsers(action, userIds, name) {
         if (action === 'delete') {
             let userMessage = userIds.length === 1 ? name : userIds.length + ' users';
-            if (confirm('Are you sure you want to delete ' + userMessage + ' ?')) {
+            $('#deleteUsersModal .modal-body p').text('Are you sure you want to delete ' + userMessage + ' ?');
+            $('#deleteUsersModal').modal('show');
+            $('#deleteUsers').on('submit', function (e) {
+                e.preventDefault();
                 groupAction(action, userIds);
-            }
+                $('#deleteUsersModal').modal('hide');
+            })
         } else {
             groupAction(action, userIds);
         }
@@ -223,6 +227,9 @@ $(document).ready(function() {
                     if ($('#myTable tbody tr.userRow').length == 0) {
                         $('#noUsersFound').removeClass('d-none');
                     }
+                    $('#deleteUsersModal').on('hidden.bs.modal', function () {
+                        $('#deleteUsers').off('submit');
+                    });
                     $('input[name="users[]"]').prop('checked', false);
                     $('.setStatus').val('-Please-select-');
                     $('#checkAll').prop('checked', false);
