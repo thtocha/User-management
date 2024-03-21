@@ -9,51 +9,49 @@ $(document).ready(function() {
         });
     }
     bindCheckboxEvents();
-    function clearForm() {
-        $('input[name=first_name]').val('');
-        $('input[name=last_name]').val('');
-        $('#customSwitch').prop('checked', false);
-        $('#status').prop('checked', false);
-        $('#role').val('-Please-select-');
-    }
 
-    $(document).on('click', '#add', function () {
-        showUserModal('add')
-    })
+    const defaultUserData = {
+        user_id: null,
+        first_name: '',
+        last_name: '',
+        status: 0,
+        role: '-Please-select-'
+    };
 
-    $(document).on('click', '#edit', function () {
-        const row = $(this).closest('tr.userRow');
-        showUserModal('update', {
-            user_id: row.data('user-id'),
-            first_name: row.data('user-name').split(' ')[0],
-            last_name: row.data('user-name').split(' ')[1],
-            status: row.data('status'),
-            role: row.data('user-role')
-        })
-    })
-
-    function showUserModal(mode, userData = null) {
-        let modal = $('#userModal');
-        let modalTitle = $('#userModalLabel');
-        let submitBtn = $('#userModalSubmit');
-        let form = $('#userForm');
-
-        if (mode === 'add') {
-            modalTitle.text('Add User');
-            submitBtn.text('Add');
-            form.attr('action', '../Controller/addUser.php');
-            clearForm();
-
-        } else if (mode === 'update') {
-            modalTitle.text('Update User');
-            submitBtn.text('Update');
-            modal.find('#user_id').val(userData.user_id);
-            modal.find('#first_name').val(userData.first_name);
-            modal.find('#last_name').val(userData.last_name);
-            modal.find('#status').prop('checked', userData.status == 1);
-            modal.find('#role').val(userData.role);
-            form.attr('action', '../Controller/updateUser.php');
+    $(document).on('click', '.addUpdateAction', function () {
+        let action = null;
+        let userData;
+        let row = $(this).closest('tr.userRow');
+        if (row.data('user-id')) {
+            action = 'update';
+            userData = {
+                user_id: row.data('user-id'),
+                first_name: row.data('user-name').split(' ')[0],
+                last_name: row.data('user-name').split(' ')[1],
+                status: row.data('status'),
+                role: row.data('user-role'),
+            };
+        } else {
+            action = 'add';
         }
+        showUserModal(action, userData);
+    });
+
+    function showUserModal(mode, userData = defaultUserData) {
+        const modal = $('#userModal');
+        const modalTitle = $('#userModalLabel');
+        const submitBtn = $('#userModalSubmit');
+        const form = $('#userForm');
+
+        modalTitle.text(mode === 'add' ? 'Add User' : 'Update User');
+        submitBtn.text(mode === 'add' ? 'Add' : 'Update');
+        form.attr('action', mode === 'add' ? '../Controller/addUser.php' : '../Controller/updateUser.php');
+
+        modal.find('#user_id').val(userData.user_id);
+        modal.find('#first_name').val(userData.first_name);
+        modal.find('#last_name').val(userData.last_name);
+        modal.find('#status').prop('checked', userData.status == 1);
+        modal.find('#role').val(userData.role);
         modal.modal('show');
     }
 
@@ -77,7 +75,6 @@ $(document).ready(function() {
                 const dataJson = JSON.parse(data);
                 if (dataJson.status) {
                     $('#userModal').modal('hide');
-                    clearForm();
 
                     if (url.includes('addUser')) {
                         addUser(dataJson.userData);
@@ -114,7 +111,7 @@ $(document).ready(function() {
             '<td>' +
             '<div class="d-flex justify-content-center">' +
             '<div class="btn-group text-center">' +
-            '<button type="button" id="edit" data-target="#updateUserModal" class="btn btn-outline-dark" data-toggle="modal">' +
+            '<button type="button" data-target="#updateUserModal" class="btn btn-outline-dark addUpdateAction" data-toggle="modal">' +
             '<i class="bi bi-pencil"></i>' +
             '</button>' +
             '<button type="button" data-target="#deleteUsersModal" class="btn btn-outline-dark" data-toggle="modal">' +
@@ -148,7 +145,7 @@ $(document).ready(function() {
             .append($('<td>')
                 .append($('<div class="d-flex justify-content-center">')
                     .append($('<div class="btn-group text-center">')
-                        .append($('<button type="button" id="edit" data-target="#updateUserModal" class="btn btn-outline-dark" data-toggle="modal">')
+                        .append($('<button type="button" data-target="#updateUserModal" class="btn btn-outline-dark addUpdateAction" data-toggle="modal">')
                             .append($('<i class="bi bi-pencil"></i>'))
                         )
                         .append($('<button type="button" data-target="#deleteUsersModal" class="btn btn-outline-dark" data-toggle="modal">')
@@ -165,7 +162,7 @@ $(document).ready(function() {
         $('input[name = "users[]"]').prop('checked', isChecked);
     }
 
-    $('#myTable').on('click', 'button[data-target="#deleteUsersModal"]', function (e) {
+    $('#myTable').on('click', 'button[data-target="#deleteUsersModal"]', function () {
         let userName = $(this).closest('tr.userRow').data('user-name');
         let id = ($(this).closest('tr.userRow').data('user-id'));
         manageUsers('delete', [id], userName)

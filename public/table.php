@@ -21,7 +21,7 @@ foreach ($query_run as $user) {
             <td>
                 <div class="d-flex justify-content-center">
                     <div class="btn-group text-center">
-                        <button type="button" id="edit" data-target="#updateUserModal" class="btn btn-outline-dark"  data-toggle="modal">
+                        <button type="button" data-target="#updateUserModal" class="btn btn-outline-dark addUpdateAction"  data-toggle="modal">
                             <i class="bi bi-pencil"></i>
                         </button>
                         <button type="button" data-target="#deleteUsersModal" class="btn btn-outline-dark" data-toggle="modal">
