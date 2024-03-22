@@ -10,20 +10,30 @@ $(document).ready(function() {
     }
     bindCheckboxEvents();
 
-    const defaultUserData = {
-        user_id: null,
-        first_name: '',
-        last_name: '',
-        status: 0,
-        role: '-Please-select-'
-    };
-
     $(document).on('click', '.addUpdateAction', function () {
-        let action = null;
-        let userData;
+        let userData = {
+            user_id: null,
+            first_name: null,
+            last_name: null,
+            status: null,
+            role: null
+        };
+
+        const modal = $('#userModal');
+        const modalTitle = $('#userModalLabel');
+        const submitBtn = $('#userModalSubmit');
+        const form = $('#userForm');
+
+        modalTitle.text('Add User');
+        submitBtn.text('Add');
+        form.attr('action', '../Controller/addUser.php');
+
         let row = $(this).closest('tr.userRow');
+
         if (row.data('user-id')) {
-            action = 'update';
+            modalTitle.text('Update User');
+            submitBtn.text('Update');
+            form.attr('action', '../Controller/updateUser.php');
             userData = {
                 user_id: row.data('user-id'),
                 first_name: row.data('user-name').split(' ')[0],
@@ -31,29 +41,16 @@ $(document).ready(function() {
                 status: row.data('status'),
                 role: row.data('user-role'),
             };
-        } else {
-            action = 'add';
         }
-        showUserModal(action, userData);
-    });
-
-    function showUserModal(mode, userData = defaultUserData) {
-        const modal = $('#userModal');
-        const modalTitle = $('#userModalLabel');
-        const submitBtn = $('#userModalSubmit');
-        const form = $('#userForm');
-
-        modalTitle.text(mode === 'add' ? 'Add User' : 'Update User');
-        submitBtn.text(mode === 'add' ? 'Add' : 'Update');
-        form.attr('action', mode === 'add' ? '../Controller/addUser.php' : '../Controller/updateUser.php');
 
         modal.find('#user_id').val(userData.user_id);
         modal.find('#first_name').val(userData.first_name);
         modal.find('#last_name').val(userData.last_name);
         modal.find('#status').prop('checked', userData.status == 1);
         modal.find('#role').val(userData.role);
+
         modal.modal('show');
-    }
+    });
 
     $('#userForm').on('submit', function (e) {
         e.preventDefault();
@@ -71,16 +68,13 @@ $(document).ready(function() {
             type: "POST",
             url: url,
             data: formData,
+            dataType: 'json',
+            encode: true,
             success: function (data) {
-                const dataJson = JSON.parse(data);
-                if (dataJson.status) {
+                if (data.status) {
                     $('#userModal').modal('hide');
 
-                    if (url.includes('addUser')) {
-                        addUser(dataJson.userData);
-                    } else {
-                        updateTableRow(formData);
-                    }
+                    formData.user_id ? updateTableRow(data.userData) : addUser(data.userData);
 
                     $('#errorMessage').addClass('d-none');
                     $('input[name="users[]"]').prop('checked', false);
@@ -91,7 +85,7 @@ $(document).ready(function() {
                     }
                 } else {
                     $('#errorMessage').removeClass('d-none');
-                    $('#errorMessage').text(dataJson.error.message);
+                    $('#errorMessage').text(data.error.message);
                 }
             },
         });

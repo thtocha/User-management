@@ -47,7 +47,7 @@ if(isset($_POST['first_name']) && isset($_POST['last_name']) && isset($_POST['st
                 'status' => true,
                 'error' => null,
                 'userData' => array(
-                    'id' => $user_id,
+                    'user_id' => $user_id,
                     'first_name' => $first_name,
                     'last_name' => $last_name,
                     'status' => $status,

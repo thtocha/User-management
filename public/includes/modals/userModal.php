@@ -29,7 +29,7 @@
                     <div class="form-group">
                         <label for="role">Role</label>
                         <select class="form-control" id="role" name="role" required>
-                            <option selected>-Please-select-</option>
+                            <option value="" selected>-Please-select-</option>
                             <?php foreach ($roles as $roleId => $roleName): ?>
                                 <option value="<?= $roleId; ?>"><?= $roleName; ?></option>
                             <?php endforeach; ?>
